@@ -3,7 +3,7 @@ package modelo;
 import java.util.Set;
 
 public class ArtistaBase {
-    private String nombre;
+    private final String nombre;
     protected Set<Colaboracion> historialBandas;
     protected double costoBase;
     protected int maxCanciones;
@@ -15,10 +15,23 @@ public class ArtistaBase {
     }
 
     public boolean puedeCubrir(Rol rol) {
+        // Verifica si el rol aparece en alguna colaboracion anterior para ver si puede cubrirlo
+        for(Colaboracion c : historialBandas){
+            if(c.getRolesOcupados().contains(rol)){
+                return true;
+            }
+        }
         return false;
     }
 
     public boolean comparteBanda(ArtistaBase otro) {
+        //Verifica si comparte banda con otro artista
+        for(Colaboracion c1 : this.historialBandas){
+            for(Colaboracion c2 : otro.historialBandas){
+                if(c1.getBanda().getNombre().equalsIgnoreCase(c2.getBanda().getNombre()))
+                    return true;
+            }
+        }
         return false;
     }
 

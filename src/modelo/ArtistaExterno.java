@@ -22,6 +22,8 @@ public class ArtistaExterno extends ArtistaBase {
     public void entrenar(Rol rol) {
         if (puedeEntrenarse()) {
             rolesAdquiridos.add(rol);
+            //¿Modifico el costo base incrementandolo un 50%? Abro hilo...
+            this.costoBase *= 1.5;
         }
     }
 

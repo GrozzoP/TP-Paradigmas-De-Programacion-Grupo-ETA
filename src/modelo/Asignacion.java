@@ -1,6 +1,7 @@
 package modelo;
 
 public class Asignacion {
+    //¿Podrian ser variables finales ya que no se deberian modificar? Abro hilo...
     private ArtistaBase artista;
     private Rol rolAsignado;
     private Cancion cancion;

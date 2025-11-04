@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Cancion {
-    private String titulo;
+    private final String titulo;
     private Map<Rol, Integer> rolesRequeridos;
 
     public Cancion(String titulo, Map<Rol, Integer> rolesRequeridos) {
@@ -21,7 +21,7 @@ public class Cancion {
         return rolesRequeridos;
     }
 
-    public Map<Rol, Integer> getRolesFaltantes(List<Asignacion> totales, Set<ArtistaBase> artistasBase) {
+    public Map<Rol, Integer> getRolesFaltantes(List<Asignacion> totales, Set<ArtistaBase> artistasBase) {        
         return null;
     }
 }

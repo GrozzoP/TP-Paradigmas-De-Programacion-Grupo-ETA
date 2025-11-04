@@ -3,7 +3,7 @@ package modelo;
 import java.util.Set;
 
 public class Colaboracion {
-    private Banda banda;
+    private final Banda banda;
     private Set<Rol> rolesOcupados;
 
     public Colaboracion(Banda banda, Set<Rol> rolesOcupados) {
@@ -11,6 +11,10 @@ public class Colaboracion {
         this.rolesOcupados = rolesOcupados;
     }
 
+    public Banda getBanda() {
+        return banda;
+    }
+    
     public Set<Rol> getRolesOcupados() {
         return rolesOcupados;
     }

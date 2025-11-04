@@ -1,7 +1,7 @@
 package modelo;
 
 public class Banda {
-    private String nombre;
+    private final String nombre;
 
     public Banda(String nombre) {
         this.nombre = nombre;

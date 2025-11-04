@@ -25,7 +25,6 @@ public class Recital {
 
     public Set<ArtistaExterno> getArtistasContratados() {
         Set<ArtistaExterno> contratados = new HashSet<>();
-
         for (Asignacion a : this.asignaciones) {
             ArtistaBase artista = a.getArtista();
             if (artista instanceof ArtistaExterno) {
@@ -51,6 +50,12 @@ public class Recital {
 
     public void entrenarArtista(ArtistaExterno artista, Rol nuevoRol) {
         // Permite entrenar a un artista externo en un nuevo rol
+        if(artista.puedeEntrenarse()){
+            artista.entrenar(nuevoRol);
+        }
+        else{
+            System.out.println("El artista " + artista + " ya no puede entrenarse en más roles");
+        }
     }
 
     public void contratarParaCancion(Cancion c, List<ArtistaExterno> candidatos) {
