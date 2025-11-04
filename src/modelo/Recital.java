@@ -53,11 +53,7 @@ public class Recital {
         }
         return faltantesTotales;
     }
-
-    public void contratarParaRecitalCompleto(List<ArtistaExterno> candidatos) {
-        // Asigna artistas externos a los roles faltantes en todas las canciones
-    }
-
+    
     public void entrenarArtista(ArtistaExterno artista, Rol nuevoRol) {
         // Permite entrenar a un artista externo en un nuevo rol
         if(artista.puedeEntrenarse()){
@@ -67,8 +63,35 @@ public class Recital {
             System.out.println("El artista " + artista + " ya no puede entrenarse en más roles");
         }
     }
-
+    
     public void contratarParaCancion(Cancion c, List<ArtistaExterno> candidatos) {
         // Asigna artistas externos faltantes solo para una canción específica
+        Map<Rol, Integer> rolesFaltantes = c.getRolesFaltantes(this.asignaciones);
+        
+        for(Rol rol : new HashSet<>(rolesFaltantes.keySet())){
+            for(ArtistaExterno artistaExt : candidatos){
+                // Verificamos si el artista puede cubrir ese rol
+                if(artistaExt.puedeCubrir(rol)){
+                    
+                    // Creamos una nueva asignacion
+                    asignaciones.add(new Asignacion(artistaExt, rol, c));
+                    
+                    int restantes = rolesFaltantes.get(rol) - 1;
+                    if(restantes <= 0) rolesFaltantes.remove(rol);
+                    else rolesFaltantes.put(rol, restantes);
+                    
+                    // No tiene sentido seguir buscando más artistas para el mismo rol en esta iteración.
+                    break;
+                }
+            }
+        }
     }
+    
+    public void contratarParaRecitalCompleto(List<ArtistaExterno> candidatos) {
+        // Asigna artistas externos a los roles faltantes en todas las canciones del recital
+        for(Cancion c : this.canciones){
+            contratarParaCancion(c, candidatos);
+        }
+    }
+
 }
