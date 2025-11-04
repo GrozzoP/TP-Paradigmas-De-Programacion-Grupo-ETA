@@ -36,8 +36,7 @@ public class Cancion {
                     if(restantes <= 0){
                         // Quita por completo la dupla <Rol,Integer>, eliminando por ejemplo: {"Guitarra", 1}
                         rolesFaltantes.remove(rol);                 
-                    }
-                    else{
+                    }else{
                         // Sobreescribe la dupla con la nueva cantidad, por ejemplo: {"Guitarra", 2} -> {"Guitarra", 1}
                         rolesFaltantes.put(rol, restantes);    
                     }
@@ -49,8 +48,7 @@ public class Cancion {
 
     @Override
     public String toString() {
-        return "Cancion{" + "titulo=" + titulo + ", rolesRequeridos=" + rolesRequeridos + '}';
+        return "Cancion{" + "titulo=" + titulo + '}';
     }
-    
     
 }

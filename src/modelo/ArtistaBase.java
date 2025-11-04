@@ -35,11 +35,26 @@ public class ArtistaBase {
         return false;
     }
 
-    public double getCostoFinal(Set<ArtistaBase> artistasBase) {
-        return 0.0;
-    }
-
     public double getCostoBase() {
         return costoBase;
     }
+    
+    /**
+     * Abro hilo...
+     * Costo final para artistas base:
+     * - En general, un artista base cobra su costoBase por canción (sin descuento).
+     * - La regla de descuento por compartir banda aplica a candidatos externos,
+     * - no a artistas base (por lo tanto aquí devolvemos costoBase).
+     *
+     * Nota: el parámetro artistasBase queda por compatibilidad de firma con subclases.
+     */
+    public double getCostoFinal(Set<ArtistaBase> artistasBase) {
+        return costoBase;
+    }
+
+    @Override
+    public String toString() {
+        return "ArtistaBase{" + "nombre: " + nombre + '}';
+    }
+    
 }

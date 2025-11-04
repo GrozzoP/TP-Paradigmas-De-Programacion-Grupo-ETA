@@ -54,13 +54,22 @@ public class Recital {
         return faltantesTotales;
     }
     
+    /**
+     * Abro hilo...
+     * La regla dice: No se puede entrenar un artista ya contratado para alguna canción. 
+     */
     public void entrenarArtista(ArtistaExterno artista, Rol nuevoRol) {
-        // Permite entrenar a un artista externo en un nuevo rol
+        // Si el artista ya tiene una asignación en el recital, no puede entrenarse.
+        boolean estaContratado = asignaciones.stream().anyMatch(a -> a.getArtista().equals(artista));
+        
+        if (estaContratado) {
+            System.out.println("No se puede entrenar al artista: " + artista + ". Ya está contratado en una asignación.");
+            return;
+        }
         if(artista.puedeEntrenarse()){
             artista.entrenar(nuevoRol);
-        }
-        else{
-            System.out.println("El artista " + artista + " ya no puede entrenarse en más roles");
+        }else{
+            System.out.println("El artista: " + artista + " ya no puede entrenarse en más roles");
         }
     }
     
@@ -94,4 +103,11 @@ public class Recital {
         }
     }
 
+    public double getCostoTotalRecital() {
+        double total = 0.0;
+        for(Asignacion a : asignaciones) {
+            total += a.getCostoEfectivo(this.artistasBase);
+        }
+        return total;
+    }
 }
