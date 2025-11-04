@@ -25,9 +25,9 @@ public class Recital {
 
     public Set<ArtistaExterno> getArtistasContratados() {
         Set<ArtistaExterno> contratados = new HashSet<>();
-        for (Asignacion a : this.asignaciones) {
+        for(Asignacion a : this.asignaciones) {
             ArtistaBase artista = a.getArtista();
-            if (artista instanceof ArtistaExterno) {
+            if(artista instanceof ArtistaExterno) {
                 contratados.add((ArtistaExterno) artista);
             }
         }
@@ -35,13 +35,23 @@ public class Recital {
     }
 
     public Map<Rol, Integer> getRolesFaltantes(Cancion c) {
-        // Retorna roles que aún no están cubiertos para la canción
-        return null;
+        // Retorna los roles que aún no están cubiertos para la canción teniendo en cuenta las asignaciones hechas.
+        return c.getRolesFaltantes(this.asignaciones);
     }
-
+    
     public Map<Rol, Integer> getRolesFaltantesTotales() {
-        // Devuelve los roles faltantes de todo el recital
-        return null;
+        // Devuelve los roles faltantes de todo el recital (de todas las canciones)
+        Map<Rol, Integer> faltantesTotales = new HashMap<>();
+        
+        for(Cancion c : this.canciones){
+            Map<Rol, Integer> faltantesCancion = c.getRolesFaltantes(this.asignaciones);
+            
+            for(Map.Entry<Rol, Integer> entry : faltantesCancion.entrySet()){
+                // El merge() agrega el par <Rol,Integer> y sino suma las cantidades si ya existía ese rol en el mapa
+                faltantesTotales.merge(entry.getKey(), entry.getValue(), Integer::sum);
+            }        
+        }
+        return faltantesTotales;
     }
 
     public void contratarParaRecitalCompleto(List<ArtistaExterno> candidatos) {
