@@ -1,9 +1,6 @@
 package modelo;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Cancion {
     private final String titulo;
@@ -19,31 +16,43 @@ public class Cancion {
     }
 
     public Map<Rol, Integer> getRolesRequeridos() {
-        return rolesRequeridos;
+        return Collections.unmodifiableMap(rolesRequeridos);
     }
 
-    public Map<Rol, Integer> getRolesFaltantes(List<Asignacion> asignaciones) { 
+    public Map<Rol, Integer> getRolesFaltantes(List<Asignacion> asignaciones) {
         Map<Rol, Integer> rolesFaltantes = new HashMap<>(rolesRequeridos);
-        
-        // Recorremos todas las asignaciones y vamos "restando" las que ya estan cubiertas para esta cancion. 
-        for(Asignacion a : asignaciones){
-            if(a.getCancion().equals(this)){
+
+        for(Asignacion a : asignaciones) {
+            if(a.getCancion().equals(this)) {
                 Rol rol = a.getRolAsignado();
-                if(rolesFaltantes.containsKey(rol)){
-                    
-                    // El metodo get() devuelve el valor asociado a la clave (porque es un Map)
+                if(rolesFaltantes.containsKey(rol)) {
+
                     int restantes = rolesFaltantes.get(rol) - 1;
-                    if(restantes <= 0){
-                        // Quita por completo la dupla <Rol,Integer>, eliminando por ejemplo: {"Guitarra", 1}
-                        rolesFaltantes.remove(rol);                 
-                    }else{
-                        // Sobreescribe la dupla con la nueva cantidad, por ejemplo: {"Guitarra", 2} -> {"Guitarra", 1}
-                        rolesFaltantes.put(rol, restantes);    
+                    if(restantes <= 0) {
+                        rolesFaltantes.remove(rol);
+                    }
+                    else {
+                        rolesFaltantes.put(rol, restantes);
                     }
                 }
             }
         }
+
         return rolesFaltantes;
+    }
+    
+    public double calcularCosto(Set<ArtistaBase> artistasBase, List<Asignacion> asignaciones) {
+        Set<ArtistaBase> artistasEnCancion = new HashSet<>();
+
+        for (Asignacion a : asignaciones) {
+            if (a.getCancion().equals(this)) {
+                artistasEnCancion.add(a.getArtista());
+            }
+        }
+
+        return artistasEnCancion.stream()
+                .mapToDouble(a -> a.getCostoFinal(artistasBase))
+                .sum();
     }
 
     @Override

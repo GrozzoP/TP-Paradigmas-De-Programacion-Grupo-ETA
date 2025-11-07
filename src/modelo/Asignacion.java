@@ -1,9 +1,9 @@
 package modelo;
 
+import java.util.List;
 import java.util.Set;
 
 public class Asignacion {
-    //¿Podrian ser variables finales ya que no se deberian modificar? Abro hilo...
     private final ArtistaBase artista;
     private final Rol rolAsignado;
     private final Cancion cancion;
@@ -35,6 +35,14 @@ public class Asignacion {
      */
     public double getCostoEfectivo(Set<ArtistaBase> artistasBase) {
         return artista.getCostoFinal(artistasBase);
+    }
+
+    public static int contarCancionesDeArtista(List<Asignacion> asignaciones, ArtistaExterno artista) {
+        return (int) asignaciones.stream()
+                .filter(a -> a.getArtista().equals(artista))
+                .map(Asignacion::getCancion)
+                .distinct()
+                .count();
     }
 
     @Override

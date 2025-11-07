@@ -1,5 +1,6 @@
 package modelo;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ArtistaBase {
@@ -12,12 +13,22 @@ public class ArtistaBase {
         this.nombre = nombre;
         this.costoBase = costoBase;
         this.maxCanciones = maxCanciones;
+        this.historialBandas = new HashSet<>();
+    }
+
+    public Set<Rol> getRolesHistoricos() {
+        Set<Rol> roles = new HashSet<>();
+
+        for(Colaboracion colaboracion : this.historialBandas) {
+            roles.addAll(colaboracion.getRolesOcupados());
+        }
+
+        return roles;
     }
 
     public boolean puedeCubrir(Rol rol) {
-        // Verifica si el rol aparece en alguna colaboracion anterior para ver si puede cubrirlo
         for(Colaboracion c : historialBandas){
-            if(c.getRolesOcupados().contains(rol)){
+            if(c.getRolesOcupados().contains(rol)) {
                 return true;
             }
         }
@@ -25,31 +36,33 @@ public class ArtistaBase {
     }
 
     public boolean comparteBanda(ArtistaBase otro) {
-        //Verifica si comparte banda con otro artista
-        for(Colaboracion c1 : this.historialBandas){
-            for(Colaboracion c2 : otro.historialBandas){
-                if(c1.getBanda().getNombre().equalsIgnoreCase(c2.getBanda().getNombre()))
+        for(Colaboracion c1 : this.historialBandas) {
+            for(Colaboracion c2 : otro.historialBandas) {
+                if(c1.getBanda().equals(c2.getBanda()))
                     return true;
             }
         }
         return false;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getMaxCanciones() {
+        return this.maxCanciones;
+    }
+
+    public boolean esContratable() {
+        return false;
+    }
+
     public double getCostoBase() {
         return costoBase;
     }
-    
-    /**
-     * Abro hilo...
-     * Costo final para artistas base:
-     * - En general, un artista base cobra su costoBase por canción (sin descuento).
-     * - La regla de descuento por compartir banda aplica a candidatos externos,
-     * - no a artistas base (por lo tanto aquí devolvemos costoBase).
-     *
-     * Nota: el parámetro artistasBase queda por compatibilidad de firma con subclases.
-     */
+
     public double getCostoFinal(Set<ArtistaBase> artistasBase) {
-        return costoBase;
+        return 0;
     }
 
     @Override

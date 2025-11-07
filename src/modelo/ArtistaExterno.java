@@ -30,29 +30,29 @@ public class ArtistaExterno extends ArtistaBase {
             rolesAdquiridos.add(rol);
         }
     }
-    
-    /** 
-     * Abro hilo...
-     * Cálculo del costo final para un artista externo:
-     * 1) Se toma el costo base.
-     * 2) Se aplica el incremento por entrenamientos: por cada rol entrenado,
-     *    el costo se multiplica por 1.5 (es decir: costoBase * 1.5 ^ n).
-     * 3) Si comparte banda con AL MENOS UN artista base (del set pasado),
-     *    se aplica un descuento del 50% (multiplicador 0.5).
-     *
-     * Nota: aplico el descuento después del incremento por entrenamientos.
-     */
+
+    @Override
+    public boolean puedeCubrir(Rol rol) {
+        boolean cubrePorHistoria = super.puedeCubrir(rol);
+
+        boolean cubrePorEntrenamiento = this.rolesAdquiridos.contains(rol);
+
+        return cubrePorEntrenamiento || cubrePorHistoria;
+    }
+
+    public boolean esContratable() {
+        return false;
+    }
+
     @Override
     public double getCostoFinal(Set<ArtistaBase> artistasBase) {
-       //Incremento por entrenamientos
-       int nEntrenamientos = rolesAdquiridos.size();
-       double costoConEntrenamientos = costoBase * Math.pow(1.5, nEntrenamientos);
-       
-       //Descuento por compartir banda con algún artista base ()
-       boolean comparte = (artistasBase != null) && (artistasBase.stream().anyMatch(base -> this.comparteBanda(base)));
-       if(comparte){
+       int cantEntrenamientos = rolesAdquiridos.size();
+       double costoConEntrenamientos = costoBase * Math.pow(1.5, cantEntrenamientos);
+
+       boolean comparte = (artistasBase != null) && (artistasBase.stream().anyMatch(this::comparteBanda));
+       if(comparte) {
             return costoConEntrenamientos * 0.5;
-       }else{
+       } else {
             return costoConEntrenamientos;
        }
     }
