@@ -55,6 +55,11 @@ public class Cancion {
                 .sum();
     }
 
+    public boolean artistaAsignadoCancion(ArtistaBase artista, List<Asignacion> asignaciones) {
+        return asignaciones.stream()
+                .anyMatch(a -> a.getCancion().equals(this) && a.getArtista().equals(artista));
+    }
+
     @Override
     public String toString() {
         return "Cancion{" + "titulo=" + titulo + '}';
