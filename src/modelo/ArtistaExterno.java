@@ -40,8 +40,9 @@ public class ArtistaExterno extends ArtistaBase {
         return cubrePorEntrenamiento || cubrePorHistoria;
     }
 
-    public boolean esContratable() {
-        return false;
+    @Override
+    public void agregarSiContratable(Set<ArtistaExterno> contratados) {
+        contratados.add(this);
     }
 
     @Override

@@ -8,6 +8,8 @@ import excepcion.RolesNoCubiertos;
 public class Recital {
     private Set<Cancion> canciones = new HashSet<>();
     private Set<ArtistaBase> artistasBase = new HashSet<>();
+    // Cuando carguemos los datos, capaz nos conviene analizarlo desde aca a los artistas externos...
+    private Set<ArtistaExterno> artistaExternos = new HashSet<>();
     private List<Asignacion> asignaciones = new ArrayList<>();
 
     public void agregarCancion(Cancion c) {
@@ -28,11 +30,9 @@ public class Recital {
 
     public Set<ArtistaExterno> getArtistasContratados() {
         Set<ArtistaExterno> contratados = new HashSet<>();
-        for(Asignacion a : this.asignaciones) {
+        for (Asignacion a : this.asignaciones) {
             ArtistaBase artista = a.getArtista();
-            if(artista.esContratable()) {
-                contratados.add((ArtistaExterno) artista);
-            }
+            artista.agregarSiContratable(contratados);
         }
         return contratados;
     }
@@ -213,12 +213,12 @@ public class Recital {
         double total = 0.0;
 
         for(Asignacion asignacion : asignaciones) {
-            if(asignacion.getArtista().esContratable()) {
-                ArtistaExterno externo = (ArtistaExterno) asignacion.getArtista();
+            ArtistaBase artista = asignacion.getArtista();
+
+            if(!artistasBase.contains(artista))
                 mapaArtistaCanciones
-                        .computeIfAbsent(externo, k -> new HashSet<>())
+                        .computeIfAbsent((ArtistaExterno) artista, k -> new HashSet<>())
                         .add(asignacion.getCancion());
-            }
         }
 
         for(ArtistaExterno artista : mapaArtistaCanciones.keySet()) {

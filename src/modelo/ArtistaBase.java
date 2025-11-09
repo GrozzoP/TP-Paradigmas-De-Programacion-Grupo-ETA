@@ -45,16 +45,20 @@ public class ArtistaBase {
         return false;
     }
 
+    public void agregarColaboracion(Colaboracion colaboracion) {
+        this.historialBandas.add(colaboracion);
+    }
+
+    public void agregarSiContratable(Set<ArtistaExterno> contratados) {
+        // Como es un artista base, no es contratable, no agrego nada
+    }
+
     public String getNombre() {
         return nombre;
     }
 
     public int getMaxCanciones() {
         return this.maxCanciones;
-    }
-
-    public boolean esContratable() {
-        return false;
     }
 
     public double getCostoBase() {
