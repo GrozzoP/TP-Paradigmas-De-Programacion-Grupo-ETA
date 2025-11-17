@@ -2,9 +2,10 @@ package dto;
 
 import java.util.List;
 
-/*
-Vamos a representar a las bandas de la siguiente manera, el nombre y los roles que tuvo en esa banda,
-para cumplir mejor con nuestro diseño segun lo que le gustaba al profe
+/**
+ * DTO para representar la participación de un artista en una banda, junto con los roles que cumplió dentro de ella.
+ * Representamos a las bandas de la siguiente manera, el nombre y los roles que tuvo en esa banda,
+ * para cumplir mejor con nuestro diseño segun lo que le gustaba al profe.
  */
 public class BandaDTO {
     private String nombre;

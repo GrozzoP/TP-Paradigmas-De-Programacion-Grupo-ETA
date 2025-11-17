@@ -2,8 +2,10 @@ package dto;
 
 import java.util.List;
 
-/* Esta clase solo se usaria para importar los datos del JSON, porque los artistas externos y base
-vienen en un mismo .json, despues hay que diferenciarlos por el archivo de artistas-discografica.json
+/** 
+ * DTO utilizado únicamente para importar artistas desde JSON.
+ * Solo se usa para importar los datos del JSON, porque los artistas externos y base
+ * vienen en un mismo .json, despues hay que diferenciarlos por el archivo de artistas-discografica.json
  */
 public class ArtistaDTO {
     private String nombre;

@@ -2,6 +2,10 @@ package modelo;
 
 import java.util.Objects;
 
+/**
+ * Representa un rol (ej. "voz principal", "guitarra eléctrica").
+ * Igualdad por nombre.
+ */
 public class Rol {
     private final String nombre;
 

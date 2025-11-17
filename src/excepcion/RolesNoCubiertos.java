@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Rol;
 
+/**
+ * Excepción lanzada cuando una banda o espectáculo no logra cubrir
+ * todos los roles requeridos para una formación.
+ * Crea la excepción indicando uno o varios roles faltantes.
+ * Devuelve un mensaje descriptivo incluyendo los roles no cubiertos.
+ */
 public class RolesNoCubiertos extends Exception {
-private List<Rol> rolesNoCubiertos = new ArrayList<>();
+    private List<Rol> rolesNoCubiertos = new ArrayList<>();
 
     public RolesNoCubiertos(String mensaje, List<Rol> rolesNoCubiertos) {
         super(mensaje);

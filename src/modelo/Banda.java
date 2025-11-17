@@ -2,6 +2,10 @@ package modelo;
 
 import java.util.Objects;
 
+/**
+ * Representa una banda/colaboración.
+ * Igualdad basada en nombre.
+ */
 public class Banda {
     private final String nombre;
 

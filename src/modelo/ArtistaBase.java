@@ -3,6 +3,12 @@ package modelo;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Representa un artista genérico del dominio.
+ * - Puede ser un artista "base" (pertenece a la discográfica) o un artista externo
+ *   (subclase ArtistaExterno).
+ * - Mantiene un historial de colaboraciones (bandas y roles que ocupó).
+ */
 public class ArtistaBase {
     private final String nombre;
     protected Set<Colaboracion> historialBandas;
@@ -15,17 +21,33 @@ public class ArtistaBase {
         this.maxCanciones = maxCanciones;
         this.historialBandas = new HashSet<>();
     }
-
+    
+    public String getNombre() {
+        return nombre;
+    }
+    public int getMaxCanciones() {
+        return this.maxCanciones;
+    }
+    public double getCostoBase() {
+        return costoBase;
+    }
+    
+    /**
+     * Devuelve el conjunto de roles históricos 
+     * ocupados por el artista
+     */
     public Set<Rol> getRolesHistoricos() {
         Set<Rol> roles = new HashSet<>();
-
         for(Colaboracion colaboracion : this.historialBandas) {
             roles.addAll(colaboracion.getRolesOcupados());
         }
-
         return roles;
     }
 
+    /**
+     * Indica si el artista pudo ocupar históricamente el rol pasado.
+     * Busca en todas sus colaboraciones.
+     */
     public boolean puedeCubrir(Rol rol) {
         for(Colaboracion c : historialBandas){
             if(c.getRolesOcupados().contains(rol)) {
@@ -35,6 +57,10 @@ public class ArtistaBase {
         return false;
     }
 
+    /**
+     * Indica si comparte al menos una banda 
+     * con otro artista (para descuentos)
+     */
     public boolean comparteBanda(ArtistaBase otro) {
         for(Colaboracion c1 : this.historialBandas) {
             for(Colaboracion c2 : otro.historialBandas) {
@@ -44,27 +70,22 @@ public class ArtistaBase {
         }
         return false;
     }
-
+    
+    /** Añade una colaboración (historial) */
     public void agregarColaboracion(Colaboracion colaboracion) {
         this.historialBandas.add(colaboracion);
     }
-
     public void agregarSiContratable(Set<ArtistaExterno> contratados) {
-        // Como es un artista base, no es contratable, no agrego nada
+        // Como es un artista base, no es contratable, no agrego nada.
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public int getMaxCanciones() {
-        return this.maxCanciones;
-    }
-
-    public double getCostoBase() {
-        return costoBase;
-    }
-
+    /**
+     * Devuelve el costo final a cobrar por canción teniendo en cuenta descuentos o
+     * entrenamientos. Para ArtistaBase (miembro de la discográfica) podría ser 0
+     * o su costo base dependiendo de cómo quieran modelarlo. Aca por defecto 0.
+     *
+     * Nota: la subclase ArtistaExterno sobreescribe este método.
+     */
     public double getCostoFinal(Set<ArtistaBase> artistasBase) {
         return 0;
     }
