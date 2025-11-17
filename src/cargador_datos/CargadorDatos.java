@@ -18,7 +18,7 @@ public class CargadorDatos {
     public static List<ArtistaBase> cargarArtistas(String rutaArtistas, String rutaDiscografica) throws Exception {
         // Archivos basicos para abrir ambos .json
         File fileArtistas = new File(rutaArtistas);
-        File fileArtistasDiscografica = new File(rutaArtistas);
+        File fileArtistasDiscografica = new File(rutaDiscografica); // lo corregi, antes decia rutaArtistas
 
         // Leo el archivo artistas.json
         List<ArtistaDTO> artistasDTO = mapper.readValue(
