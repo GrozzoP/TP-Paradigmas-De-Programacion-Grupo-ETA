@@ -28,26 +28,6 @@ public class Asignacion {
         return cancion;
     }
 
-    /**
-     * Devuelve el costo efectivo de esta asignación (por canción), 
-     * preguntando al artista por su costo final y pasando el 
-     * conjunto de artistas base (necesario para descuentos).
-     */
-    public double getCostoEfectivo(Set<ArtistaBase> artistasBase) {
-        return artista.getCostoFinal(artistasBase);
-    }
-
-    /**
-     * Cuenta la cantidad de canciones distintas en las que 
-     * participa un artista en la lista de asignaciones provista.
-     */
-    public static int contarCancionesDeArtista(List<Asignacion> asignaciones, ArtistaExterno artista) {
-        return (int) asignaciones.stream()
-                .filter(a -> a.getArtista().equals(artista))
-                .map(Asignacion::getCancion)
-                .distinct()
-                .count();
-    }
 
     @Override
     public String toString() {

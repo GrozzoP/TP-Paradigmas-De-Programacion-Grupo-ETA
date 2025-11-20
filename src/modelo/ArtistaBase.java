@@ -70,24 +70,14 @@ public class ArtistaBase {
         }
         return false;
     }
+
+    public boolean esEntrenable() {
+        return false;
+    }
     
     /** Añade una colaboración (historial) */
     public void agregarColaboracion(Colaboracion colaboracion) {
         this.historialBandas.add(colaboracion);
-    }
-    public void agregarSiContratable(Set<ArtistaExterno> contratados) {
-        // Como es un artista base, no es contratable, no agrego nada.
-    }
-
-    /**
-     * Devuelve el costo final a cobrar por canción teniendo en cuenta descuentos o
-     * entrenamientos. Para ArtistaBase (miembro de la discográfica) podría ser 0
-     * o su costo base dependiendo de cómo quieran modelarlo. Aca por defecto 0.
-     *
-     * Nota: la subclase ArtistaExterno sobreescribe este método.
-     */
-    public double getCostoFinal(Set<ArtistaBase> artistasBase) {
-        return 0;
     }
 
     @Override

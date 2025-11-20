@@ -55,23 +55,6 @@ public class Cancion {
 
         return rolesFaltantes;
     }
-    
-    /**
-     * Calcula el costo total de la canción sumando el costo final por canción 
-     * de cada artista que participa en la misma (según las asignaciones provistas).
-     */
-    public double calcularCosto(Set<ArtistaBase> artistasBase, List<Asignacion> asignaciones) {
-        Set<ArtistaBase> artistasEnCancion = new HashSet<>();
- 
-        for (Asignacion a : asignaciones) {
-            if (a.getCancion().equals(this)) {
-                artistasEnCancion.add(a.getArtista());
-            }
-        }
-        return artistasEnCancion.stream()
-                .mapToDouble(a -> a.getCostoFinal(artistasBase))
-                .sum();
-    }
 
     /**
      * Indica si un artista ya fue asignado 

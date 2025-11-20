@@ -1,9 +1,12 @@
 package modelo;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import excepcion.ArtistaNoEntrenable;
 import excepcion.RolesNoCubiertos;
+import servicio.AsignacionServicio;
+import servicio.EntrenarServicio;
 
 /**
  * Representa un recital compuesto por un conjunto de 
@@ -21,9 +24,10 @@ import excepcion.RolesNoCubiertos;
 public class Recital {
     private Set<Cancion> canciones = new HashSet<>();
     private Set<ArtistaBase> artistasBase = new HashSet<>();
-    // Cuando carguemos los datos, capaz nos conviene analizarlo desde aca a los artistas externos...
     private Set<ArtistaExterno> artistaExternos = new HashSet<>();
     private List<Asignacion> asignaciones = new ArrayList<>();
+    private AsignacionServicio asignacionServicio = new AsignacionServicio();
+    private EntrenarServicio entrenamientoServicio = new EntrenarServicio();
 
     public void agregarCancion(Cancion c) {
         canciones.add(c);
@@ -43,12 +47,13 @@ public class Recital {
      * Devuelve el conjunto de artistas externos efectivamente contratados.
      * Se determina revisando todas las asignaciones del recital.
      */
-    public Set<ArtistaExterno> getArtistasContratados() {
-        Set<ArtistaExterno> contratados = new HashSet<>();
+    public Set<ArtistaBase> getArtistasContratados() {
+        Set<ArtistaBase> contratados = new HashSet<>();
         for (Asignacion a : this.asignaciones) {
             ArtistaBase artista = a.getArtista();
-            artista.agregarSiContratable(contratados);
+            contratados.add(artista);
         }
+
         return contratados;
     }
 
@@ -88,79 +93,89 @@ public class Recital {
         if (estaContratado) {
             throw new ArtistaNoEntrenable("El artista " + artista.getNombre() + " no es entrenable!");
         }
-        if(artista.puedeEntrenarse()){
+        if(artista.esEntrenable()){
             artista.entrenar(nuevoRol);
         } else{
             System.out.println("El artista: " + artista + " ya no puede entrenarse en más roles");
         }
     }
-    
-    /**
-     * Asigna artistas base automáticamente.
-     * Recorre todas las canciones y asigna un artista base que pueda cubrir
-     * algún rol faltante (si no está ya asignado a esa canción).
-     */
-    public void asignarArtistasBase() {
-        for(Cancion cancion : canciones) {
-            for(ArtistaBase artista : artistasBase) {
-                boolean yaAsignadoCancion = cancion.artistaAsignadoCancion(artista, asignaciones);
 
-                if(!yaAsignadoCancion) {
-                    Map<Rol, Integer> rolesFaltantes = cancion.getRolesFaltantes(asignaciones);
-
-                    for(Rol rol : rolesFaltantes.keySet()) {
-                        if(!yaAsignadoCancion && artista.puedeCubrir(rol)) {
-                            Asignacion asignacion = new Asignacion(artista, rol, cancion);
-                            asignaciones.add(asignacion);
-                            yaAsignadoCancion = true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     /**
-     * Contrata artistas externos SOLO para una canción específica.
+     * Contrata artistas SOLO para una canción específica.
      * Elige los más baratos que cubran cada rol faltante.
      * Si no hay suficientes artistas para un rol, lanza una excepción.
      */
-    public void contratarParaCancion(Cancion c, List<ArtistaExterno> artistaExternos) throws RolesNoCubiertos {
+    public void contratarParaCancion(Cancion c) throws RolesNoCubiertos {
         Map<Rol, Integer> rolesFaltantes = c.getRolesFaltantes(this.asignaciones);
         List<Asignacion> nuevasAsignaciones = new ArrayList<>();
-        Set<ArtistaExterno> artistasYaUsadosEnCancion = new HashSet<>();
 
-        if(rolesFaltantes.isEmpty()) {
+        if (rolesFaltantes.isEmpty()) {
             System.out.println("Los roles para la cancion " + c.getTitulo() + " estan completamente cubiertos!");
             return;
         }
-        // Para cada rol faltante...
-        for (Map.Entry<Rol, Integer> rolCantidad : rolesFaltantes.entrySet()) {
-            Rol rol = rolCantidad.getKey();
-            int cantidad = rolCantidad.getValue();
 
-             // Filtra artistas capaces, no repetidos y los ordena por costo
-            List<ArtistaExterno> candidatos = artistaExternos.stream()
-                    .filter(a -> a.puedeCubrir(rol))
-                    .filter(a -> !artistasYaUsadosEnCancion.contains(a))
-                    .sorted(Comparator.comparingDouble(a -> a.getCostoFinal(artistasBase)))
-                    .toList();
+        Set<ArtistaBase> artistasAsignadosEnEstaCancion = new HashSet<>();
+        List<Rol> rolesNoCubiertos = new ArrayList<>();
 
-            if(candidatos.size() < cantidad)
-                throw new RolesNoCubiertos("No hay suficientes artistas para cubrir los roles!", rol);
+        for (Map.Entry<Rol, Integer> entry : rolesFaltantes.entrySet()) {
+            Rol rol = entry.getKey();
+            int cantidadFaltante = entry.getValue();
 
-            // Asigna los más baratos
-            for (int i = 0; i < cantidad; i++) {
-                ArtistaExterno elegido = candidatos.get(i);
-                nuevasAsignaciones.add(new Asignacion(elegido, rol, c));
-                artistasYaUsadosEnCancion.add(elegido);
+            for (int i = 0; i < cantidadFaltante; i++) {
+                ArtistaBase artistaElegido = this.artistasBase.stream()
+                        .filter(artista -> artista.puedeCubrir(rol))
+                        .filter(artista -> !artistasAsignadosEnEstaCancion.contains(artista))
+                        .findFirst()
+                        .orElse(null);
+
+                if (artistaElegido == null)
+                    artistaElegido = buscarArtistaExternoMasBarato(c, rol, artistaExternos, artistasAsignadosEnEstaCancion);
+
+                if (artistaElegido != null) {
+                    nuevasAsignaciones.add(new Asignacion(artistaElegido, rol, c));
+                    artistasAsignadosEnEstaCancion.add(artistaElegido);
+                } else {
+                    rolesNoCubiertos.add(rol);
+                }
+            }
+        }
+
+        if (!rolesNoCubiertos.isEmpty()) {
+            Set<Rol> rolesTiposFaltantes = new HashSet<>(rolesNoCubiertos);
+
+            Map<String, Long> conteoRoles = rolesNoCubiertos.stream()
+                    .map(Rol::getNombre)
+                    .collect(Collectors.groupingBy(nombre -> nombre, Collectors.counting()));
+
+            Map<ArtistaExterno, Set<Rol>> recomendaciones = entrenamientoServicio.recomendarEntrenamiento(
+                    rolesTiposFaltantes, this.artistaExternos, this.asignaciones
+            );
+
+            if (!recomendaciones.isEmpty()) {
+                StringBuilder errorMsg = new StringBuilder();
+                errorMsg.append("Contratación incompleta. Faltan cubrir los siguientes roles:\n");
+
+                conteoRoles.forEach((nombre, count) -> {
+                    errorMsg.append("- **").append(nombre).append("**: Faltan **").append(count).append("** artistas.\n");
+                });
+
+                errorMsg.append("\nSe recomienda entrenar a los siguientes artistas para cubrir los roles faltantes (optimizado por costo):\n");
+
+                for (Map.Entry<ArtistaExterno, Set<Rol>> entry : recomendaciones.entrySet()) {
+                    errorMsg.append("- **").append(entry.getKey().getNombre()).append("**: Puede entrenarse en ").append(entry.getValue().stream().map(Rol::getNombre).collect(Collectors.joining(", "))).append("\n");
+                }
+
+                throw new RolesNoCubiertos(errorMsg.toString(), rolesTiposFaltantes.iterator().next());
+            } else {
+                String faltantes = conteoRoles.entrySet().stream()
+                        .map(e -> e.getKey() + " (" + e.getValue() + ")")
+                        .collect(Collectors.joining(", "));
+
+                throw new RolesNoCubiertos("No se pudieron cubrir todos los roles y no hay artistas externos entrenables disponibles. Faltan: " + faltantes, rolesTiposFaltantes.iterator().next());
             }
         }
 
         this.asignaciones.addAll(nuevasAsignaciones);
-    
-        double costoCancion = c.calcularCosto(artistasBase, nuevasAsignaciones);
-        System.out.println("Contrataciones realizadas para '" + c.getTitulo() + "'. Costo total: " + costoCancion);
     }
 
     /**
@@ -169,74 +184,30 @@ public class Recital {
      * Respeta el límite máximo de canciones de cada artista.
      */
     public void contratarParaRecitalCompleto(List<ArtistaExterno> candidatos) throws RolesNoCubiertos {
-        List<Asignacion> nuevasAsignaciones = new ArrayList<>();
-
-        for(Cancion cancion : canciones) {
-            Map<Rol, Integer> rolesFaltantes = cancion.getRolesFaltantes(asignaciones);
-
-            if (rolesFaltantes.isEmpty()) {
-                System.out.println("La canción '" + cancion.getTitulo() + "' ya está completa");
-            }
-            else
-            {
-                for(Map.Entry<Rol, Integer> rolCantidad : rolesFaltantes.entrySet()) {
-                    Rol rol = rolCantidad.getKey();
-                    int cantidad = rolCantidad.getValue(), asignados = 0;
-
-                    for(ArtistaExterno artistaExterno : candidatos) {
-                        boolean puedeCubrir = false, yaAsignadoCancion = false;
-                        int cantidadCancionesActuales = 0 ;
-
-                        puedeCubrir = artistaExterno.puedeCubrir(rol);
-                        yaAsignadoCancion = cancion.artistaAsignadoCancion(artistaExterno, asignaciones);
-                        cantidadCancionesActuales = Asignacion.contarCancionesDeArtista(asignaciones, artistaExterno);
-
-                        boolean disponible = puedeCubrir && !yaAsignadoCancion &&
-                                cantidadCancionesActuales < artistaExterno.getMaxCanciones();
-
-                        if(disponible && asignados < cantidad) {
-                            nuevasAsignaciones.add(new Asignacion(artistaExterno, rol, cancion));
-                            asignados++;
-                        }
-                    }
-
-                    if(asignados < cantidad)
-                        throw new RolesNoCubiertos("No hay suficientes artistas para cubrir el rol: " + rol + " en " + cancion.getTitulo(), rol);
-                }
-             }
-        }
-
-        this.asignaciones.addAll(nuevasAsignaciones);
     }
-    
-    /** 
+
+    /**
      * Devuelve el artista externo más barato que pueda cubrir un rol
      * en una canción dada, teniendo en cuenta límites de canciones
      * y evitando duplicaciones dentro de la misma canción.
      */
-    private ArtistaExterno buscarArtistaMasBarato(Cancion cancion, Rol rol, List<ArtistaExterno> artistaExternos) {
+    private ArtistaExterno buscarArtistaExternoMasBarato(Cancion c, Rol rol, Set<ArtistaExterno> artistaExternos, Set<ArtistaBase> artistasAsignados) {
         ArtistaExterno mejorArtista = null;
         double costoMinimo = Double.MAX_VALUE;
 
         for(ArtistaExterno candidato : artistaExternos) {
-            if(candidato.puedeCubrir(rol)) {
+            if(asignacionServicio.esArtistaElegibleParaRol(this.asignaciones, candidato, rol, artistasAsignados)) {
+                double descuento =
+                        asignacionServicio.esDescuentoAplicablePorCancion(candidato, c, this.asignaciones, artistasAsignados) ?
+                        ArtistaExterno.DESCUENTO_BANDA : 1;
+                double costo = candidato.getCostoBase() * descuento;
 
-                boolean yaAsignadoCancion = asignaciones.stream().
-                    anyMatch(a -> a.getArtista().equals(candidato) && a.getCancion().equals(cancion));
-
-                int cantidadCanciones = Asignacion.contarCancionesDeArtista(asignaciones, candidato);
-                
-                if(!yaAsignadoCancion && cantidadCanciones < candidato.getMaxCanciones())
-                {
-                    double costo = candidato.getCostoFinal(artistasBase);
-                    if(costo < costoMinimo) {
-                        mejorArtista = candidato;
-                        costoMinimo = costo;
-                    }
+                if(costo < costoMinimo) {
+                    mejorArtista = candidato;
+                    costoMinimo = costo;
                 }
             }
         }
-
         return mejorArtista;
     }
 
@@ -248,7 +219,7 @@ public class Recital {
     public void listarCancionesEstado() {
         for (Cancion c : canciones) {
             boolean completa = c.getRolesFaltantes(asignaciones).isEmpty();
-            double costo = c.calcularCosto(artistasBase, asignaciones);
+            double costo = asignacionServicio.calcularCostoTotalCancion(c, this.asignaciones, artistasBase);
             System.out.println("Canción: " + c.getTitulo() + " | Completa: " + completa + " | Costo: " + costo);
         }
     }
@@ -259,20 +230,19 @@ public class Recital {
      * (cantidad de canciones en las que participa) × (costo final del artista).
      */
     public double getCostoTotalRecital() {
-        Map<ArtistaExterno, Set<Cancion>> mapaArtistaCanciones = new HashMap<>();
         double total = 0.0;
 
-        for(Asignacion asignacion : asignaciones) {
+        for(Asignacion asignacion : this.asignaciones) {
             ArtistaBase artista = asignacion.getArtista();
-            if(!artistasBase.contains(artista))
-                mapaArtistaCanciones
-                        .computeIfAbsent((ArtistaExterno) artista, k -> new HashSet<>())
-                        .add(asignacion.getCancion());
-        }
 
-        for(ArtistaExterno artista : mapaArtistaCanciones.keySet()) {
-            int cantidadCanciones = mapaArtistaCanciones.get(artista).size();
-            total += cantidadCanciones * artista.getCostoFinal(artistasBase);
+            double costoAsignacion = asignacionServicio.calcularCostoFinalPorAsignacion(
+                    artista,
+                    asignacion.getCancion(),
+                    this.asignaciones,
+                    this.artistasBase
+            );
+
+            total += costoAsignacion;
         }
 
         return total;

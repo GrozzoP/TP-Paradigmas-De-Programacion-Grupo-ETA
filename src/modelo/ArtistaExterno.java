@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public class ArtistaExterno extends ArtistaBase {
     private Set<Rol> rolesAdquiridos;
+    public static final double INCREMENTO_ENTRENAMIENTO = 1.5;
+    public static final double DESCUENTO_BANDA = 0.5;
 
     public ArtistaExterno(String nombre, double costoBase, int maxCanciones) {
         super(nombre, costoBase, maxCanciones);
@@ -19,23 +21,21 @@ public class ArtistaExterno extends ArtistaBase {
     public Set<Rol> getRolesAdquiridos() {
         return rolesAdquiridos;
     }
-    
-    /**
-     * Política de cantidad máxima de entrenamientos permitidos.
-     * Valor elegido en el diseño; si lo cambian, actualizar acá.
-     */
-    public boolean puedeEntrenarse() {
-        return rolesAdquiridos.size() < 3;
-    }
-    
+
     /**
      * Añade un rol entrenado. No modifica costoBase aquí; el cálculo del
      * incremento se hace en getCostoFinal para evitar duplicaciones.
      */
     public void entrenar(Rol rol) {
-        if(puedeEntrenarse()) {
-            rolesAdquiridos.add(rol);
-        }
+        if(rol == null)
+            throw new IllegalArgumentException("El rol a entrenar no puede ser nulo!");
+
+        rolesAdquiridos.add(rol);
+        this.costoBase = this.costoBase * INCREMENTO_ENTRENAMIENTO;
+    }
+
+    public boolean esEntrenable() {
+        return true;
     }
 
     /**
@@ -48,28 +48,4 @@ public class ArtistaExterno extends ArtistaBase {
         boolean cubrePorEntrenamiento = this.rolesAdquiridos.contains(rol);
         return cubrePorEntrenamiento || cubrePorHistoria;
     }
-
-    @Override
-    public void agregarSiContratable(Set<ArtistaExterno> contratados) {
-        contratados.add(this);
-    }
-
-    /**
-     * Calcula el costo final por canción:
-     * - Aplica incremento por entrenamientos: costoBase * (1.5 ^ nEntrenamientos)
-     * - Aplica descuento 50% si comparte banda con al menos un artista base del recital.
-     */
-    @Override
-    public double getCostoFinal(Set<ArtistaBase> artistasBase) {
-       int cantEntrenamientos = rolesAdquiridos.size();
-       double costoConEntrenamientos = costoBase * Math.pow(1.5, cantEntrenamientos);
-
-       boolean comparte = (artistasBase != null) && (artistasBase.stream().anyMatch(this::comparteBanda));
-       if(comparte) {
-            return costoConEntrenamientos * 0.5;
-       } else {
-            return costoConEntrenamientos;
-       }
-    }
-    
 }
