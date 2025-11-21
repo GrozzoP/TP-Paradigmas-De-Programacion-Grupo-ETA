@@ -13,6 +13,9 @@ public class ArtistaDTO {
     private double costo;
     private int maxCanciones;
 
+    public ArtistaDTO() {
+    }
+
     public ArtistaDTO(String nombre, List<BandaDTO> bandas, double costo, int maxCanciones) {
         this.nombre = nombre;
         this.bandas = bandas;

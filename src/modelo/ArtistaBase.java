@@ -82,7 +82,11 @@ public class ArtistaBase {
 
     @Override
     public String toString() {
-        return "ArtistaBase{" + "nombre: " + nombre + '}';
+        String costoFormateado = String.format("$%.2f", this.costoBase);
+
+        return "🎤| Nombre: " + this.nombre +
+                " | Costo: " + costoFormateado +
+                " | Máx Canciones: " + this.maxCanciones +
+                " | Roles Históricos: " + this.getRolesHistoricos().size() + " en total";
     }
-    
 }

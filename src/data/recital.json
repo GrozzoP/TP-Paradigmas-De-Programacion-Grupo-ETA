@@ -1,0 +1,14 @@
+[
+  {
+    "titulo": "Oye Como Va",
+    "rolesRequeridos": ["Guitarrista", "Compositor"]
+  },
+  {
+    "titulo": "No Voy en Tren",
+    "rolesRequeridos": ["Voz", "Tecladista"]
+  },
+  {
+    "titulo": "Levitating",
+    "rolesRequeridos": ["Voz"]
+  }
+]

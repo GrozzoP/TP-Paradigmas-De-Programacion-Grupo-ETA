@@ -11,6 +11,9 @@ public class BandaDTO {
     private String nombre;
     private List<String> roles;
 
+    public BandaDTO() {
+    }
+
     public BandaDTO(String nombre, List<String> roles) {
         this.nombre = nombre;
         this.roles = roles;

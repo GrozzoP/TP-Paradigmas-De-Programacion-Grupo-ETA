@@ -3,6 +3,7 @@ package modelo;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import cargador_datos.CargadorDatos;
 import excepcion.ArtistaNoEntrenable;
 import excepcion.RolesNoCubiertos;
 import servicio.AsignacionServicio;
@@ -22,12 +23,22 @@ import servicio.EntrenarServicio;
  * Esta clase es el "núcleo operativo": coordina el armado completo del recital.
  */
 public class Recital {
-    private Set<Cancion> canciones = new HashSet<>();
-    private Set<ArtistaBase> artistasBase = new HashSet<>();
-    private Set<ArtistaExterno> artistaExternos = new HashSet<>();
-    private List<Asignacion> asignaciones = new ArrayList<>();
-    private AsignacionServicio asignacionServicio = new AsignacionServicio();
-    private EntrenarServicio entrenamientoServicio = new EntrenarServicio();
+    private Set<Cancion> canciones;
+    private Set<ArtistaBase> artistasBase;
+    private Set<ArtistaExterno> artistaExternos;
+    private List<Asignacion> asignaciones;
+    private final AsignacionServicio asignacionServicio;
+    private final EntrenarServicio entrenamientoServicio;
+
+
+    public Recital(CargadorDatos cargadorDatos) throws Exception {
+        this.canciones = cargadorDatos.cargarCanciones();
+        this.artistasBase = cargadorDatos.cargarSoloArtistasBase();
+        this.artistaExternos = cargadorDatos.cargarSoloArtistasExternos();
+        this.asignaciones = new ArrayList<>();
+        this.asignacionServicio = new AsignacionServicio();
+        this.entrenamientoServicio = new EntrenarServicio();
+    }
 
     public void agregarCancion(Cancion c) {
         canciones.add(c);
@@ -197,10 +208,7 @@ public class Recital {
 
         for(ArtistaExterno candidato : artistaExternos) {
             if(asignacionServicio.esArtistaElegibleParaRol(this.asignaciones, candidato, rol, artistasAsignados)) {
-                double descuento =
-                        asignacionServicio.esDescuentoAplicablePorCancion(candidato, c, this.asignaciones, artistasAsignados) ?
-                        ArtistaExterno.DESCUENTO_BANDA : 1;
-                double costo = candidato.getCostoBase() * descuento;
+                double costo = candidato.getCostoBase();
 
                 if(costo < costoMinimo) {
                     mejorArtista = candidato;
@@ -224,6 +232,8 @@ public class Recital {
         }
     }
 
+
+
     /**
      * Calcula el costo total del recital.
      * Se multiplica para cada artista externo:
@@ -246,5 +256,21 @@ public class Recital {
         }
 
         return total;
+    }
+
+    public Set<Cancion> getCanciones() {
+        return canciones;
+    }
+
+    public Set<ArtistaBase> getArtistasBase() {
+        return artistasBase;
+    }
+
+    public Set<ArtistaExterno> getArtistaExternos() {
+        return artistaExternos;
+    }
+
+    public List<Asignacion> getAsignaciones() {
+        return asignaciones;
     }
 }

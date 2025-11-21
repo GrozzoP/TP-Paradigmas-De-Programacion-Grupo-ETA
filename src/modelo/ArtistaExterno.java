@@ -18,6 +18,11 @@ public class ArtistaExterno extends ArtistaBase {
         this.rolesAdquiridos = new HashSet<>();
     }
 
+    public ArtistaExterno(ArtistaBase base) {
+        super(base.getNombre(), base.getCostoBase(), base.getMaxCanciones());
+        this.rolesAdquiridos = new HashSet<>();
+    }
+
     public Set<Rol> getRolesAdquiridos() {
         return rolesAdquiridos;
     }
@@ -47,5 +52,18 @@ public class ArtistaExterno extends ArtistaBase {
         boolean cubrePorHistoria = super.puedeCubrir(rol);
         boolean cubrePorEntrenamiento = this.rolesAdquiridos.contains(rol);
         return cubrePorEntrenamiento || cubrePorHistoria;
+    }
+
+    @Override
+    public String toString() {
+        String costoFormateado = String.format("$%.2f", this.getCostoBase());
+
+
+        return "⭐| Nombre: " + super.getNombre() +
+                " | Costo Actual: " + costoFormateado +
+                " | Máx Canciones: " + super.getMaxCanciones() +
+                " | Roles Históricos: " + super.getRolesHistoricos().size() +
+                " | Roles Entrenados: " + this.rolesAdquiridos.size() +
+                " (" + this.rolesAdquiridos + ")";
     }
 }

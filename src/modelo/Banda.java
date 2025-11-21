@@ -28,4 +28,11 @@ public class Banda {
     public int hashCode() {
         return Objects.hashCode(nombre);
     }
+
+    @Override
+    public String toString() {
+        return "Banda{" +
+                "nombre='" + nombre + '\'' +
+                '}';
+    }
 }

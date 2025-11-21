@@ -1,6 +1,19 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter. Mauri probando cosas
+import cargador_datos.CargadorDatos;
+import menu.Menu;
+import modelo.ArtistaBase;
+import modelo.ArtistaExterno;
+import modelo.Cancion;
+import modelo.Recital;
+
+import java.util.List;
+import java.util.Set;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        System.out.println("Iniciando aplicación de gestión de recitales...");
+
+        Menu menuApp = new Menu();
+
+        menuApp.iniciarMenu();
     }
 }

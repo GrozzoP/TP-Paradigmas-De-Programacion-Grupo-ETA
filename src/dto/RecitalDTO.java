@@ -8,10 +8,17 @@ import java.util.List;
  * Su único propósito es transportar datos desde JSON,
  * para luego convertirlos al modelo real (clase Cancion).
  */
-public class CancionDTO {
-	
-private String titulo;
+public class RecitalDTO {
+    private String titulo;
     private List<String> rolesRequeridos;
+
+    public RecitalDTO() {
+    }
+
+    public RecitalDTO(String titulo, List<String> rolesRequeridos) {
+        this.titulo = titulo;
+        this.rolesRequeridos = rolesRequeridos;
+    }
 
     public String getTitulo() {
         return titulo;

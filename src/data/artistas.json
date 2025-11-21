@@ -1,0 +1,35 @@
+[
+  {
+    "nombre": "Carlos Santana",
+    "bandas": [
+      {
+        "nombre": "Santana",
+        "roles": ["Guitarrista", "Compositor"]
+      }
+    ],
+    "costo": 50000,
+    "maxCanciones": 6
+  },
+  {
+    "nombre": "Charly García",
+    "bandas": [
+      {
+        "nombre": "Serú Girán",
+        "roles": ["Tecladista", "Voz"]
+      }
+    ],
+    "costo": 30000,
+    "maxCanciones": 5
+  },
+  {
+    "nombre": "Dua Lipa",
+    "bandas": [
+      {
+        "nombre": "Dua Lipa Live",
+        "roles": ["Voz"]
+      }
+    ],
+    "costo": 60000,
+    "maxCanciones": 7
+  }
+]
