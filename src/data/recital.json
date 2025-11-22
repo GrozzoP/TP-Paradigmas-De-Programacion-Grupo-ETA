@@ -1,14 +1,22 @@
 [
   {
-    "titulo": "Oye Como Va",
-    "rolesRequeridos": ["Guitarrista", "Compositor"]
+    "titulo": "Europa",
+    "rolesRequeridos": ["Guitarrista", "Compositor", "Karaoke"]
   },
   {
-    "titulo": "No Voy en Tren",
-    "rolesRequeridos": ["Voz", "Tecladista"]
+    "titulo": "Cerca de la revolución",
+    "rolesRequeridos": ["Tecladista", "Guitarrista"]
   },
   {
     "titulo": "Levitating",
     "rolesRequeridos": ["Voz"]
+  },
+  {
+    "titulo": "Sultans of Swing",
+    "rolesRequeridos": ["Bajista"]
+  },
+  {
+    "titulo": "Desarma y sangra",
+    "rolesRequeridos": ["Voz", "Tecladista"]
   }
 ]

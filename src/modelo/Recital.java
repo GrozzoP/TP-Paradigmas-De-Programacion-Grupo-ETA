@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import cargador_datos.CargadorDatos;
+import dto.EstadoRecitalDTO;
 import excepcion.ArtistaNoEntrenable;
 import excepcion.RolesNoCubiertos;
 import servicio.AsignacionServicio;
@@ -116,13 +117,13 @@ public class Recital {
      * Elige los más baratos que cubran cada rol faltante.
      * Si no hay suficientes artistas para un rol, lanza una excepción.
      */
-    public void contratarParaCancion(Cancion c) throws RolesNoCubiertos {
+    public List<Asignacion> contratarParaCancion(Cancion c) throws RolesNoCubiertos {
         Map<Rol, Integer> rolesFaltantes = c.getRolesFaltantes(this.asignaciones);
         List<Asignacion> nuevasAsignaciones = new ArrayList<>();
 
         if (rolesFaltantes.isEmpty()) {
             System.out.println("Los roles para la cancion " + c.getTitulo() + " estan completamente cubiertos!");
-            return;
+            return new ArrayList<>();
         }
 
         Set<ArtistaBase> artistasAsignadosEnEstaCancion = new HashSet<>();
@@ -151,6 +152,10 @@ public class Recital {
             }
         }
 
+        if(!nuevasAsignaciones.isEmpty()) {
+            this.asignaciones.addAll(nuevasAsignaciones);
+        }
+
         if (!rolesNoCubiertos.isEmpty()) {
             Set<Rol> rolesTiposFaltantes = new HashSet<>(rolesNoCubiertos);
 
@@ -163,20 +168,9 @@ public class Recital {
             );
 
             if (!recomendaciones.isEmpty()) {
-                StringBuilder errorMsg = new StringBuilder();
-                errorMsg.append("Contratación incompleta. Faltan cubrir los siguientes roles:\n");
+                String mensajeError = entrenamientoServicio.generarMensajeRecomendacion(conteoRoles, recomendaciones);
 
-                conteoRoles.forEach((nombre, count) -> {
-                    errorMsg.append("- **").append(nombre).append("**: Faltan **").append(count).append("** artistas.\n");
-                });
-
-                errorMsg.append("\nSe recomienda entrenar a los siguientes artistas para cubrir los roles faltantes (optimizado por costo):\n");
-
-                for (Map.Entry<ArtistaExterno, Set<Rol>> entry : recomendaciones.entrySet()) {
-                    errorMsg.append("- **").append(entry.getKey().getNombre()).append("**: Puede entrenarse en ").append(entry.getValue().stream().map(Rol::getNombre).collect(Collectors.joining(", "))).append("\n");
-                }
-
-                throw new RolesNoCubiertos(errorMsg.toString(), rolesTiposFaltantes.iterator().next());
+                throw new RolesNoCubiertos(mensajeError, rolesTiposFaltantes.iterator().next());
             } else {
                 String faltantes = conteoRoles.entrySet().stream()
                         .map(e -> e.getKey() + " (" + e.getValue() + ")")
@@ -187,6 +181,7 @@ public class Recital {
         }
 
         this.asignaciones.addAll(nuevasAsignaciones);
+        return nuevasAsignaciones;
     }
 
     /**
@@ -194,7 +189,37 @@ public class Recital {
      * Similar al método anterior, pero recorriendo todas las canciones.
      * Respeta el límite máximo de canciones de cada artista.
      */
-    public void contratarParaRecitalCompleto(List<ArtistaExterno> candidatos) throws RolesNoCubiertos {
+    public List<Asignacion> contratarParaRecitalCompleto() throws RolesNoCubiertos {
+        List<Asignacion> nuevasAsignaciones = new ArrayList<>();
+        Map<String, String> erroresPorCancion = new HashMap<>();
+
+        for (Cancion cancion : this.canciones) {
+            try {
+                List<Asignacion> nuevasAsignacionesDeCancion = this.contratarParaCancion(cancion);
+
+                if (!nuevasAsignacionesDeCancion.isEmpty()) {
+                    nuevasAsignaciones.addAll(nuevasAsignacionesDeCancion);
+                }
+
+            } catch (RolesNoCubiertos e) {
+                erroresPorCancion.put(cancion.getTitulo(), e.getMessage());
+            }
+        }
+
+        if (!erroresPorCancion.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+
+            for (Map.Entry<String, String> entry : erroresPorCancion.entrySet()) {
+                sb.append("\n🎤 FALLO en Canción: ").append(entry.getKey()).append("\n");
+                sb.append("------------------------------------------------------------------\n");
+                sb.append(entry.getValue());
+                sb.append("\n==================================================================");
+            }
+
+            throw new RolesNoCubiertos(sb.toString());
+        }
+
+        return nuevasAsignaciones;
     }
 
     /**
@@ -258,6 +283,62 @@ public class Recital {
         return total;
     }
 
+    public void mostrarDetalleAsignacion(Asignacion asignacion) {
+        double costoFinal = this.asignacionServicio.calcularCostoFinalPorAsignacion(
+                asignacion.getArtista(),
+                asignacion.getCancion(),
+                this.getAsignaciones(),
+                this.getArtistasBase()
+        );
+
+        String costoFormateado = String.format("$%,.2f", costoFinal);
+
+        System.out.println("\n" + "-".repeat(30));
+        System.out.println(" DETALLE DE ASIGNACIÓN");
+        System.out.println("-".repeat(30));
+        System.out.printf("Artista: %s\n", asignacion.getArtista().getNombre());
+        System.out.printf("Cancion: %s\n", asignacion.getCancion().getTitulo());
+        System.out.printf("Rol asignado: %s\n", asignacion.getRolAsignado().getNombre());
+        System.out.printf("Costo: %s\n", costoFormateado);
+        System.out.println("-".repeat(30));
+    }
+
+    public void cargarEstadoPrevio(List<EstadoRecitalDTO> estadoGuardado) {
+        if (estadoGuardado.isEmpty()) {
+            System.out.println("No hay estado previo para cargar.");
+            return;
+        }
+
+        this.asignaciones.clear();
+
+        Map<String, ArtistaBase> todosLosArtistas = new HashMap<>();
+        this.artistasBase.forEach(a -> todosLosArtistas.put(a.getNombre(), a));
+        this.artistaExternos.forEach(a -> todosLosArtistas.put(a.getNombre(), a));
+
+        Map<String, Cancion> todasLasCanciones = this.canciones.stream()
+                .collect(Collectors.toMap(Cancion::getTitulo, c -> c));
+
+        int asignacionesCargadas = 0;
+
+        for (EstadoRecitalDTO dto : estadoGuardado) {
+            ArtistaBase artista = todosLosArtistas.get(dto.getArtista());
+            Cancion cancion = todasLasCanciones.get(dto.getCancion());
+            Rol rol = new Rol(dto.getRol());
+
+            if (artista == null || cancion == null) {
+                System.err.println("No se pudo cargar la asignación: "
+                        + dto.getArtista() + " en " + dto.getCancion());
+                continue;
+            }
+
+            Asignacion nuevaAsignacion = new Asignacion(artista, rol, cancion);
+            this.asignaciones.add(nuevaAsignacion);
+            asignacionesCargadas++;
+        }
+
+        System.out.printf("Estado previo de %d asignaciones cargadas con éxito!\n", asignacionesCargadas);
+    }
+
     public Set<Cancion> getCanciones() {
         return canciones;
     }
@@ -272,5 +353,13 @@ public class Recital {
 
     public List<Asignacion> getAsignaciones() {
         return asignaciones;
+    }
+
+    public AsignacionServicio getAsignacionServicio() {
+        return asignacionServicio;
+    }
+
+    public EntrenarServicio getEntrenamientoServicio() {
+        return entrenamientoServicio;
     }
 }

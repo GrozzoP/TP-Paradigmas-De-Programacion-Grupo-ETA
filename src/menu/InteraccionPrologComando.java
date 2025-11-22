@@ -3,7 +3,7 @@ package menu;
 import modelo.Recital;
 import servicio.PrologServicio;
 
-public class InteraccionPrologComando implements Comando, Descriptor {
+public class InteraccionPrologComando implements Comando {
 	private Recital recital;
 	private final PrologServicio prologServicio;
 

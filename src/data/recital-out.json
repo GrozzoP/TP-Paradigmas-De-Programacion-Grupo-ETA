@@ -1,0 +1,56 @@
+[ {
+  "artista" : "Charly García",
+  "costo" : 0.0,
+  "cancion" : "Cerca de la revolución",
+  "rol" : "Tecladista"
+}, {
+  "artista" : "Carlos Santana",
+  "costo" : 0.0,
+  "cancion" : "Cerca de la revolución",
+  "rol" : "Guitarrista"
+}, {
+  "artista" : "Charly García",
+  "costo" : 0.0,
+  "cancion" : "Cerca de la revolución",
+  "rol" : "Tecladista"
+}, {
+  "artista" : "Carlos Santana",
+  "costo" : 0.0,
+  "cancion" : "Cerca de la revolución",
+  "rol" : "Guitarrista"
+}, {
+  "artista" : "Carlos Santana",
+  "costo" : 0.0,
+  "cancion" : "Europa",
+  "rol" : "Guitarrista"
+}, {
+  "artista" : "Charly García",
+  "costo" : 0.0,
+  "cancion" : "Desarma y sangra",
+  "rol" : "Tecladista"
+}, {
+  "artista" : "Saje",
+  "costo" : 7000.0,
+  "cancion" : "Desarma y sangra",
+  "rol" : "Voz"
+}, {
+  "artista" : "Charly García",
+  "costo" : 0.0,
+  "cancion" : "Desarma y sangra",
+  "rol" : "Tecladista"
+}, {
+  "artista" : "Saje",
+  "costo" : 7000.0,
+  "cancion" : "Desarma y sangra",
+  "rol" : "Voz"
+}, {
+  "artista" : "Saje",
+  "costo" : 7000.0,
+  "cancion" : "Levitating",
+  "rol" : "Voz"
+}, {
+  "artista" : "Saje",
+  "costo" : 7000.0,
+  "cancion" : "Levitating",
+  "rol" : "Voz"
+} ]

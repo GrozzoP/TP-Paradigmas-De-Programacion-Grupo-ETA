@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ListarArtistasBaseComando implements Comando, Descriptor {
+public class ListarArtistasBaseComando implements Comando {
     private Recital recital;
 
     public ListarArtistasBaseComando(Recital recital) {

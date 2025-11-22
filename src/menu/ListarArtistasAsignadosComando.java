@@ -5,7 +5,7 @@ import modelo.Recital;
 
 import java.util.Set;
 
-public class ListarArtistasAsignadosComando implements Comando, Descriptor {
+public class ListarArtistasAsignadosComando implements Comando {
     private Recital recital;
 
     public ListarArtistasAsignadosComando(Recital recital) {

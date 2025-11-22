@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class Menu {
     public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_CYAN = "\u001B[36m";
@@ -40,11 +41,13 @@ public class Menu {
         comandos.add(new ListarRolesRestCancionComando(recital, scanner));
         comandos.add(new ListarRolesRestRecitalComando(recital));
         comandos.add(new ContratarArtistasCancionComando(recital, scanner));
-        comandos.add(new ContratarArtistasRecitalComando(recital));
+        comandos.add(new ContratarArtistasRecitalComando(recital, scanner));
         comandos.add(new EntrenarArtistaComando(recital, scanner));
         comandos.add(new ListarArtistasAsignadosComando(recital));
         comandos.add(new ListarEstadoCancionesComando(recital));
         comandos.add(new InteraccionPrologComando(recital));
+        comandos.add(new GuardarEstadoComando(recital));
+        comandos.add(new CargarEstadoAnteriorComando(recital));
         comandos.add(new SalirComando(recital, this));
     }
 
@@ -53,6 +56,11 @@ public class Menu {
             this.mostrarMenu();
             int eleccion = this.obtenerEleccion();
             this.ejecutarOpcion(eleccion);
+
+            if(this.estaEnEjecucion) {
+                System.out.println("Presione ENTER para continuar...");
+                this.scanner.nextLine();
+            }
         }
 
         this.scanner.close();
@@ -75,8 +83,7 @@ public class Menu {
 
         for (int i = 0; i < comandos.size(); i++) {
             int numero = i + 1;
-            Descriptor comandoDescriptor = (Descriptor) comandos.get(i);
-            String descripcion = comandoDescriptor.getDescripcion();
+            String descripcion = comandos.get(i).getDescripcion();
 
             String lineaOpcion = String.format(ANSI_CYAN + "%d." + ANSI_RESET + " %s", numero, descripcion);
             System.out.println(lineaOpcion);
@@ -91,18 +98,29 @@ public class Menu {
 
         do {
             try {
-                if(scanner.hasNextInt()) {
+                if (scanner.hasNextInt()) {
                     eleccion = scanner.nextInt();
 
-                    if(eleccion < MINIMA_OPCION || eleccion > comandos.size())
-                        System.err.printf("Opcion no valida. Ingrese una opcion que este entre %d y %d: ", MINIMA_OPCION, comandos.size());
+                    this.scanner.nextLine();
+
+                    if (eleccion < MINIMA_OPCION || eleccion > comandos.size()) {
+                        System.err.printf(ANSI_RED + "Opción no válida. Ingresá una opción que esté entre %d y %d: " + ANSI_RESET, MINIMA_OPCION, comandos.size());
+                    }
+                } else {
+                    String entradaInvalida = this.scanner.next();
+                    this.scanner.nextLine();
+
+                    System.err.printf(ANSI_RED + "Entrada inválida ('%s'). Ingresá un número entre %d y %d: " + ANSI_RESET, entradaInvalida, MINIMA_OPCION, comandos.size());
+
+                    eleccion = -1;
                 }
-            } catch (InputMismatchException e) {
-                System.err.println("Error inesperado en la entrada.");
+            } catch (Exception e) {
+                System.err.println(ANSI_RED + "Error inesperado en la entrada...h" + ANSI_RESET);
+                this.scanner.nextLine();
+                eleccion = -1;
             }
         } while (eleccion < MINIMA_OPCION || eleccion > comandos.size());
 
-        scanner.nextLine();
         return eleccion;
     }
 
@@ -112,7 +130,11 @@ public class Menu {
         try {
             comando.ejecutar();
         } catch (Exception e) {
-            System.err.print("ERROR DE EJECUCION! " + e.getMessage());
+            System.err.print("ERROR DE EJECUCION! " + e.getMessage() + "\n");
         }
+    }
+
+    public void setEstaEnEjecucion(boolean estaEnEjecucion) {
+        this.estaEnEjecucion = estaEnEjecucion;
     }
 }

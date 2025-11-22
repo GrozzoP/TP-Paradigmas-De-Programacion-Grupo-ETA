@@ -7,7 +7,7 @@
         "roles": ["Guitarrista", "Compositor"]
       }
     ],
-    "costo": 50000,
+    "costo": 0,
     "maxCanciones": 6
   },
   {
@@ -15,10 +15,10 @@
     "bandas": [
       {
         "nombre": "Serú Girán",
-        "roles": ["Tecladista", "Voz"]
+        "roles": ["Tecladista", "Guitarrista"]
       }
     ],
-    "costo": 30000,
+    "costo": 0,
     "maxCanciones": 5
   },
   {
@@ -30,6 +30,17 @@
       }
     ],
     "costo": 60000,
+    "maxCanciones": 7
+  },
+  {
+    "nombre": "Saje",
+    "bandas": [
+      {
+        "nombre": "Kamada",
+        "roles": ["Voz"]
+      }
+    ],
+    "costo": 7000,
     "maxCanciones": 7
   }
 ]

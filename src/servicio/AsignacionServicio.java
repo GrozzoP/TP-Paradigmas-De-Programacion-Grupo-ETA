@@ -52,6 +52,24 @@ public class AsignacionServicio {
         return artistasBasePresentes;
     }
 
+    public boolean chequearDescuentoArtista(
+            ArtistaBase artista,
+            Cancion cancion,
+            List<modelo.Asignacion> asignaciones,
+            Set<ArtistaBase> artistasBase
+    ) {
+        if (artista.getCostoBase() == 0) {
+            return false;
+        }
+
+        return this.esDescuentoAplicablePorCancion(
+                (ArtistaExterno) artista,
+                cancion,
+                asignaciones,
+                artistasBase
+        );
+    }
+
     /**
      * Verifica si el descuento del 50% es aplicable a un ArtistaExterno candidato
      * basándose en si comparte banda con algún ArtistaBase que ya esté

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.ArtistaDTO;
 import dto.BandaDTO;
+import dto.EstadoRecitalDTO;
 import dto.RecitalDTO;
 import modelo.*;
 
@@ -25,6 +26,7 @@ public class CargadorDatos {
     public static final String  RUTA_ARCHIVO_ARTISTAS = "data/artistas.json";
     public static final String  RUTA_ARCHIVO_ARTISTAS_DISCOGRAFICA = "data/artistas-discografica.json";
     public static final String  RUTA_ARCHIVO_RECITAL = "data/recital.json";
+    public static final String RUTA_ARCHIVO_GUARDADO = "src/data/recital-out.json";
 
     /**
      * Obtiene el recurso como un InputStream usando el ClassLoader.
@@ -86,7 +88,6 @@ public class CargadorDatos {
      * @return conjunto de canciones del modelo completamente transformadas.
      */
     public Set<Cancion> cargarCanciones() throws Exception {
-        // CAMBIO: Usa getResource() para obtener el InputStream
         try (InputStream isRecital = getResource(RUTA_ARCHIVO_RECITAL)) {
 
             List<RecitalDTO> cancionesDTO = mapper.readValue(
@@ -97,14 +98,11 @@ public class CargadorDatos {
             Set<Cancion> canciones = new HashSet<>();
 
             for (RecitalDTO dto : cancionesDTO) {
-
-                // Mapa de roles → cantidad requerida (cuenta repeticiones)
                 Map<Rol, Integer> rolesContados = new HashMap<>();
 
                 for (String nombreRol : dto.getRolesRequeridos()) {
                     Rol rol = new Rol(nombreRol);
 
-                    // Contabiliza roles duplicados
                     if (rolesContados.containsKey(rol)) {
                         rolesContados.compute(rol, (k, actual) -> actual + 1);
                     } else {
@@ -112,7 +110,6 @@ public class CargadorDatos {
                     }
                 }
 
-                // Crea la Cancion del modelo con título + mapa de roles requeridos
                 Cancion cancion = new Cancion(dto.getTitulo(), rolesContados);
                 canciones.add(cancion);
             }
@@ -161,5 +158,33 @@ public class CargadorDatos {
 
             return externos;
         }
+    }
+
+    public static void guardarEstado(List<EstadoRecitalDTO> dtoList) throws Exception {
+        File file = new File(RUTA_ARCHIVO_GUARDADO);
+
+        File direccionPadre = file.getParentFile();
+
+        if (direccionPadre != null && !direccionPadre.exists()) {
+            if (!direccionPadre.mkdirs()) {
+                throw new java.io.IOException("Fallo al crear el directorio: " + direccionPadre.getAbsolutePath());
+            }
+        }
+
+        mapper.writerWithDefaultPrettyPrinter().writeValue(file, dtoList);
+    }
+
+    public static List<EstadoRecitalDTO> cargarEstado() throws Exception {
+        File file = new File(RUTA_ARCHIVO_GUARDADO);
+
+        if (!file.exists()) {
+            System.out.println("No se encontró el archivo de estado en: " + RUTA_ARCHIVO_GUARDADO);
+            return new ArrayList<>();
+        }
+
+        return mapper.readValue(
+                file,
+                new TypeReference<List<EstadoRecitalDTO>>() {}
+        );
     }
 }

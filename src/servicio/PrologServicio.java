@@ -2,15 +2,14 @@ package servicio;
 
 import modelo.Recital;
 import modelo.Rol;
-import org.jpl7.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class PrologServicio {
-
     public PrologServicio() {
+        /*
         //Cargamos el archivo Prolog
         Query q1 = new Query(
                 "consult",
@@ -20,11 +19,12 @@ public class PrologServicio {
         if (!q1.hasSolution()) {
             throw new RuntimeException("No se pudo cargar el archivo Prolog: prolog/recital_planning.pl");
         }
+        */
     }
 
 
     public int calcularEntrenamientosMinimos(Recital recital) {
-   
+   /*
         Map<Rol, Integer> faltantes = recital.getRolesFaltantesTotales();
 
         //Convertimos ese map a una lista de Term con repetidos
@@ -56,6 +56,7 @@ public class PrologServicio {
         Map<String, Term> solution = q.oneSolution();
 
         
-        return solution.get("N").intValue();
+        return solution.get("N").intValue();*/
+        return 0;
     }
 }

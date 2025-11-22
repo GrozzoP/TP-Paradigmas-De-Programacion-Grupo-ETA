@@ -2,6 +2,7 @@ package modelo;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Representa un artista externo que puede ser contratado.
@@ -21,6 +22,7 @@ public class ArtistaExterno extends ArtistaBase {
     public ArtistaExterno(ArtistaBase base) {
         super(base.getNombre(), base.getCostoBase(), base.getMaxCanciones());
         this.rolesAdquiridos = new HashSet<>();
+        this.historialBandas.addAll(base.historialBandas);
     }
 
     public Set<Rol> getRolesAdquiridos() {
@@ -58,12 +60,21 @@ public class ArtistaExterno extends ArtistaBase {
     public String toString() {
         String costoFormateado = String.format("$%.2f", this.getCostoBase());
 
+        Set<Rol> rolesHistoricos = super.getRolesHistoricos();
+
+        String rolesHistoricosStr = rolesHistoricos.stream()
+                .map(Rol::getNombre)
+                .collect(Collectors.joining(", "));
+
+        String rolesAdquiridosStr = this.rolesAdquiridos.stream()
+                .map(Rol::getNombre)
+                .collect(Collectors.joining(", "));
 
         return "⭐| Nombre: " + super.getNombre() +
                 " | Costo Actual: " + costoFormateado +
                 " | Máx Canciones: " + super.getMaxCanciones() +
-                " | Roles Históricos: " + super.getRolesHistoricos().size() +
-                " | Roles Entrenados: " + this.rolesAdquiridos.size() +
+                " | Roles Históricos: " + rolesHistoricosStr +
+                " | Roles Entrenados: " + rolesAdquiridosStr +
                 " (" + this.rolesAdquiridos + ")";
     }
 }

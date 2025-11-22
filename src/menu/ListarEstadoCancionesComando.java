@@ -2,7 +2,7 @@ package menu;
 
 import modelo.Recital;
 
-public class ListarEstadoCancionesComando implements Comando, Descriptor {
+public class ListarEstadoCancionesComando implements Comando {
     private Recital recital;
 
     public ListarEstadoCancionesComando(Recital recital) {

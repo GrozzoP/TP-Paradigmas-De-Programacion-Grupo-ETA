@@ -7,7 +7,7 @@ import modelo.Recital;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ListasArtistasExternosComando implements Comando, Descriptor {
+public class ListasArtistasExternosComando implements Comando {
     private Recital recital;
 
     public ListasArtistasExternosComando(Recital recital) {

@@ -2,7 +2,7 @@ package menu;
 
 import modelo.Recital;
 
-public class SalirComando implements Comando, Descriptor{
+public class SalirComando implements Comando {
     private Recital recital;
     private Menu menu;
 
@@ -13,7 +13,7 @@ public class SalirComando implements Comando, Descriptor{
 
     @Override
     public void ejecutar() {
-
+        this.menu.setEstaEnEjecucion(false);
     }
 
     @Override

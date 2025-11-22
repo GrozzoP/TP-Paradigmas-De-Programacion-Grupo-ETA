@@ -5,6 +5,7 @@ import modelo.Asignacion;
 import modelo.Rol;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntrenarServicio {
     /**
@@ -21,6 +22,39 @@ public class EntrenarServicio {
         boolean esEntrenable = artista.esEntrenable();
 
         return noEstaContratado && esEntrenable;
+    }
+
+    /**
+     * Genera el mensaje de error detallado cuando la contratación falla y hay
+     * artistas entrenables disponibles.
+     *
+     * @param conteoRoles Cantidad de roles necesarios
+     * @param recomendaciones La recoemndacion de que roles pueden entrenar
+     * @return String con el mensaje de error formateado.
+     */
+    public String generarMensajeRecomendacion(Map<String, Long> conteoRoles, Map<ArtistaExterno, Set<Rol>> recomendaciones) {
+        StringBuilder errorMsg = new StringBuilder();
+
+        errorMsg.append("Contratación incompleta. Faltan cubrir los siguientes roles:\n");
+
+        conteoRoles.forEach((nombre, count) -> {
+            errorMsg.append("• ").append(nombre).append(": Falta/n ").append(count).append(".\n");
+        });
+
+        errorMsg.append("\n=================================================================\n");
+        errorMsg.append("OPCIONES DE ENTRENAMIENTO:\n");
+        errorMsg.append("=================================================================\n");
+
+        for (Map.Entry<ArtistaExterno, Set<Rol>> entry : recomendaciones.entrySet()) {
+            String rolesAdquiribles = entry.getValue().stream()
+                    .map(Rol::getNombre)
+                    .collect(Collectors.joining(", "));
+
+            errorMsg.append("- ").append(entry.getKey().getNombre()).append(": Puede entrenarse en [");
+            errorMsg.append(rolesAdquiribles).append("]\n");
+        }
+
+        return errorMsg.toString();
     }
 
     /**

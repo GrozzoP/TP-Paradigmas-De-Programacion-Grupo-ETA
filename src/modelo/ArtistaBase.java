@@ -2,6 +2,7 @@ package modelo;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Representa un artista genérico del dominio.
@@ -84,9 +85,15 @@ public class ArtistaBase {
     public String toString() {
         String costoFormateado = String.format("$%.2f", this.costoBase);
 
+        Set<Rol> rolesHistoricos = this.getRolesHistoricos();
+
+        String rolesHistoricosStr = rolesHistoricos.stream()
+                .map(Rol::getNombre)
+                .collect(Collectors.joining(", "));
+
         return "🎤| Nombre: " + this.nombre +
                 " | Costo: " + costoFormateado +
                 " | Máx Canciones: " + this.maxCanciones +
-                " | Roles Históricos: " + this.getRolesHistoricos().size() + " en total";
+                " | Roles Históricos: " + rolesHistoricosStr;
     }
 }
