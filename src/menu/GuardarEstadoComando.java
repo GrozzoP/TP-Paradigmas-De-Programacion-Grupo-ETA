@@ -22,17 +22,15 @@ public class GuardarEstadoComando implements Comando {
 
         List<Asignacion> asignaciones = recital.getAsignaciones();
         if (asignaciones.isEmpty()) {
-            System.out.println("⚠️ No hay asignaciones para guardar.");
+            System.out.println("No hay asignaciones para guardar.");
             return;
         }
 
-        // Renombrar la lista a algo más descriptivo si aplica
-        List<EstadoRecitalDTO> dtoList = new ArrayList<>();
+        List<EstadoRecitalDTO> estadosRecital = new ArrayList<>();
 
         try {
             for (Asignacion asignacion : asignaciones) {
 
-                // 1. Calcular el costo final (el descuento ya está incluido en este valor)
                 double costoFinal = recital.getAsignacionServicio().calcularCostoFinalPorAsignacion(
                         asignacion.getArtista(),
                         asignacion.getCancion(),
@@ -40,15 +38,13 @@ public class GuardarEstadoComando implements Comando {
                         recital.getArtistasBase()
                 );
 
-                // 2. 💡 CAMBIO: Usamos el constructor del DTO sin el campo 'descuento'
-                dtoList.add(new EstadoRecitalDTO(asignacion, costoFinal));
+                estadosRecital.add(new EstadoRecitalDTO(asignacion, costoFinal));
             }
 
-            // Asumo que tienes CargadorDatos.guardarEstado(List<EstadoRecitalDTO>)
-            CargadorDatos.guardarEstado(dtoList);
+            CargadorDatos.guardarEstado(estadosRecital);
 
             System.out.println(Menu.ANSI_GREEN + "✅ Estado guardado con éxito en: " + CargadorDatos.RUTA_ARCHIVO_GUARDADO + Menu.ANSI_RESET);
-            System.out.printf("Se serializaron %d asignaciones.\n", dtoList.size());
+            System.out.printf("Se almacenaron %d asignaciones.\n", estadosRecital.size());
 
         } catch (Exception e) {
             System.err.println(Menu.ANSI_RED + "❌ ERROR al guardar el estado: " + e.getMessage() + Menu.ANSI_RESET);

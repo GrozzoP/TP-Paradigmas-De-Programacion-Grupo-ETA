@@ -4,7 +4,6 @@ import excepcion.RolesNoCubiertos;
 import modelo.Asignacion;
 import modelo.Cancion;
 import modelo.Recital;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -30,6 +29,7 @@ public class ContratarArtistasCancionComando implements Comando {
 
         if(cancionOpt.isPresent()) {
             Cancion cancion = cancionOpt.get();
+            int asignacionesAntes = recital.getAsignaciones().size();
 
             try {
                 List<Asignacion> nuevasAsignaciones = recital.contratarParaCancion(cancion);
@@ -43,11 +43,22 @@ public class ContratarArtistasCancionComando implements Comando {
                 }
 
             } catch (RolesNoCubiertos e) {
+                List<Asignacion> todasLasAsignaciones = recital.getAsignaciones();
+                List<Asignacion> asignacionesParciales = todasLasAsignaciones.subList(asignacionesAntes, todasLasAsignaciones.size());
+
+                if(!asignacionesParciales.isEmpty()) {
+                    System.out.println(Menu.ANSI_GREEN + "\n✅ Asignación parcial para '" + cancion.getTitulo() + "'. Se lograron " + asignacionesParciales.size() + " asignación(es):" + Menu.ANSI_RESET);
+
+                    for(Asignacion asignacion : asignacionesParciales) {
+                        this.recital.mostrarDetalleAsignacion(asignacion);
+                    }
+                }
+
                 System.out.println(Menu.ANSI_RED + "\n❌ Contratación fallida. El motivo es: " + Menu.ANSI_RESET);
                 System.out.println(e.getMessage());
             }
         } else {
-            System.out.println(Menu.ANSI_RED + "\n❌ ERROR: Canción '" + cancionStr + "' no encontrada en el recital." + Menu.ANSI_RESET);
+            System.out.println(Menu.ANSI_RED + "\nERROR: La canción '" + cancionStr + "' no fue encontrada en el recital." + Menu.ANSI_RESET);
         }
     }
 

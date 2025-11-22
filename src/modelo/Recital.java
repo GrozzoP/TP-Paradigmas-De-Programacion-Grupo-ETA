@@ -180,7 +180,6 @@ public class Recital {
             }
         }
 
-        this.asignaciones.addAll(nuevasAsignaciones);
         return nuevasAsignaciones;
     }
 
@@ -243,21 +242,6 @@ public class Recital {
         }
         return mejorArtista;
     }
-
-    /**
-     * Muestra el estado de cada canción:
-     * - Si está completa
-     * - Su costo total actual
-     */
-    public void listarCancionesEstado() {
-        for (Cancion c : canciones) {
-            boolean completa = c.getRolesFaltantes(asignaciones).isEmpty();
-            double costo = asignacionServicio.calcularCostoTotalCancion(c, this.asignaciones, artistasBase);
-            System.out.println("Canción: " + c.getTitulo() + " | Completa: " + completa + " | Costo: " + costo);
-        }
-    }
-
-
 
     /**
      * Calcula el costo total del recital.
@@ -337,6 +321,12 @@ public class Recital {
         }
 
         System.out.printf("Estado previo de %d asignaciones cargadas con éxito!\n", asignacionesCargadas);
+    }
+
+    public List<Asignacion> getAsignacionesPorCancion(Cancion cancion) {
+        return this.asignaciones.stream()
+                .filter(a -> a.getCancion().equals(cancion))
+                .collect(Collectors.toList());
     }
 
     public Set<Cancion> getCanciones() {

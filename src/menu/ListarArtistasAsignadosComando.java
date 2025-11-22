@@ -20,7 +20,7 @@ public class ListarArtistasAsignadosComando implements Comando {
             System.out.println("Actualmente, no hay artistas asignados!");
         }
         else {
-            System.out.println("\n--- 🎤 ARTISTAS ASIGNADOS AL RECITAL 🎸 ---");
+            System.out.println("\n--- 🎤 ARTISTAS ASIGNADOS AL RECITAL   ---");
             int contador = 1;
 
             for(ArtistaBase artista : artistasContratados) {

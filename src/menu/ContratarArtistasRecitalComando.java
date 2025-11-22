@@ -34,8 +34,7 @@ public class ContratarArtistasRecitalComando implements Comando {
             nuevasAsignaciones = todasAsignacionesDespues.subList(asignacionesAntes, todasAsignacionesDespues.size());
 
         } catch (Exception e) {
-            System.err.println(Menu.ANSI_RED + "\n❌ ERROR INESPERADO: " + e.getMessage() + Menu.ANSI_RESET);
-            this.scanner.nextLine();
+            System.err.println(Menu.ANSI_RED + "\nERROR INESPERADO: " + e.getMessage() + Menu.ANSI_RESET);
         }
 
         int asignacionesNue = (nuevasAsignaciones != null) ? nuevasAsignaciones.size() : 0;

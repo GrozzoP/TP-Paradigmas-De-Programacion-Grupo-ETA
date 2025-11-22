@@ -27,6 +27,10 @@
       {
         "nombre": "Dua Lipa Live",
         "roles": ["Voz"]
+      },
+      {
+        "nombre": "Santana",
+        "roles": ["Corista"]
       }
     ],
     "costo": 60000,
