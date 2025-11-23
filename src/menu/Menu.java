@@ -49,6 +49,7 @@ public class Menu {
         comandos.add(new MostrarHistorialColaboracionesComando(recital));
         comandos.add(new GuardarEstadoComando(recital));
         comandos.add(new CargarEstadoAnteriorComando(recital));
+        comandos.add(new EliminarArtistaRecitalComando(recital, scanner));
         comandos.add(new SalirComando(recital, this));
     }
 
@@ -116,7 +117,7 @@ public class Menu {
                     eleccion = -1;
                 }
             } catch (Exception e) {
-                System.err.println(ANSI_RED + "Error inesperado en la entrada...h" + ANSI_RESET);
+                System.err.println(ANSI_RED + "Error inesperado en la entrada..." + ANSI_RESET);
                 this.scanner.nextLine();
                 eleccion = -1;
             }

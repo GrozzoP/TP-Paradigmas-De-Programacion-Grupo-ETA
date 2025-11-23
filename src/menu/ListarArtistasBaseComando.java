@@ -27,6 +27,6 @@ public class ListarArtistasBaseComando implements Comando {
 
     @Override
     public String getDescripcion() {
-        return "Listar artistas base (pertenecientes a la discografica)";
+        return "Listar artistas base (pertenecientes a la discográfica)";
     }
 }

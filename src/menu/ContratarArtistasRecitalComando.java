@@ -56,7 +56,7 @@ public class ContratarArtistasRecitalComando implements Comando {
         }
 
         System.out.println("\n-----------------------------------------------------------------");
-        System.out.printf("Costo total final del recital: $%,.2f\n", recital.getCostoTotalRecital());
+        System.out.printf(Menu.ANSI_GREEN + "Costo total final del recital: $%,.2f\n" + Menu.ANSI_RESET, recital.getCostoTotalRecital());
         System.out.println("-----------------------------------------------------------------");
     }
 

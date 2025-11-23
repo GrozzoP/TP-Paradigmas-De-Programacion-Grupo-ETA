@@ -31,11 +31,7 @@ public class AsignacionServicio {
             return false;
         }
 
-        if (!this.respetaLimiteCanciones(candidato, asignaciones)) {
-            return false;
-        }
-
-        return true;
+        return this.respetaLimiteCanciones(candidato, asignaciones);
     }
 
     /**
@@ -114,6 +110,22 @@ public class AsignacionServicio {
         }
     }
 
+    public int eliminarArtistaRecital(ArtistaBase artista, Recital recital) {
+        if(artista == null)
+            return -1;
+
+        List<Asignacion> asignaciones = recital.getAsignaciones();
+        int asignacionesPrev = asignaciones.size();
+
+        asignaciones.removeIf(
+                asignacion -> asignacion.getArtista().equals(artista)
+        );
+
+        int asignacionesNue = asignaciones.size();
+
+        return asignacionesPrev - asignacionesNue;
+    }
+
     public double calcularCostoTotalCancion(Cancion cancion, List<Asignacion> asignaciones, Set<ArtistaBase> artistasBaseRecital) {
         Set<ArtistaBase> artistasEnCancion = new HashSet<>();
 
@@ -128,6 +140,11 @@ public class AsignacionServicio {
                     return this.calcularCostoFinalPorAsignacion(artista, cancion, asignaciones, artistasBaseRecital);}).sum();
     }
 
+    public boolean respetaLimiteCanciones(ArtistaBase artista, List<Asignacion> asignaciones) {
+        int cancionesYaAsignadas = contarCancionesDeArtista(asignaciones, artista);
+        return cancionesYaAsignadas < artista.getMaxCanciones();
+    }
+
     // METODOS AUXILIARES
     private int contarCancionesDeArtista(List<Asignacion> asignaciones, ArtistaBase artista) {
         return (int) asignaciones.stream()
@@ -135,10 +152,5 @@ public class AsignacionServicio {
                 .map(Asignacion::getCancion)
                 .distinct()
                 .count();
-    }
-
-    private boolean respetaLimiteCanciones(ArtistaBase artista, List<Asignacion> asignaciones) {
-        int cancionesYaAsignadas = contarCancionesDeArtista(asignaciones, artista);
-        return cancionesYaAsignadas < artista.getMaxCanciones();
     }
 }

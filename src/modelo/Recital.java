@@ -126,7 +126,10 @@ public class Recital {
             return new ArrayList<>();
         }
 
-        Set<ArtistaBase> artistasAsignadosEnEstaCancion = new HashSet<>();
+        Set<ArtistaBase> artistasAsignadosEnEstaCancion = this.asignaciones.stream()
+                .filter(a -> a.getCancion().equals(c))
+                .map(Asignacion::getArtista)
+                .collect(Collectors.toSet());
         List<Rol> rolesNoCubiertos = new ArrayList<>();
 
         for (Map.Entry<Rol, Integer> entry : rolesFaltantes.entrySet()) {
@@ -137,6 +140,7 @@ public class Recital {
                 ArtistaBase artistaElegido = this.artistasBase.stream()
                         .filter(artista -> artista.puedeCubrir(rol))
                         .filter(artista -> !artistasAsignadosEnEstaCancion.contains(artista))
+                        .filter(artista -> this.asignacionServicio.respetaLimiteCanciones(artista, this.asignaciones))
                         .findFirst()
                         .orElse(null);
 
@@ -243,6 +247,10 @@ public class Recital {
         return mejorArtista;
     }
 
+    public int quitarArtista(ArtistaBase artistaBase) {
+        return this.asignacionServicio.eliminarArtistaRecital(artistaBase, this);
+    }
+
     /**
      * Calcula el costo total del recital.
      * Se multiplica para cada artista externo:
@@ -277,10 +285,15 @@ public class Recital {
 
         String costoFormateado = String.format("$%,.2f", costoFinal);
 
+        boolean esArtistaExterno = asignacion.getArtista().getCostoBase() > 0;
+
+        String operacion = esArtistaExterno ? "CONTRATACIÓN" : "ASIGNACIÓN";
+        String artistaEtiqueta = esArtistaExterno ? "Artista Contratado" : "Artista Asignado";
+
         System.out.println("\n" + "-".repeat(30));
-        System.out.println(" DETALLE DE ASIGNACIÓN");
+        System.out.println(" DETALLE DE " + operacion);
         System.out.println("-".repeat(30));
-        System.out.printf("Artista: %s\n", asignacion.getArtista().getNombre());
+        System.out.printf(artistaEtiqueta + ": %s\n", asignacion.getArtista().getNombre());
         System.out.printf("Cancion: %s\n", asignacion.getCancion().getTitulo());
         System.out.printf("Rol asignado: %s\n", asignacion.getRolAsignado().getNombre());
         System.out.printf("Costo: %s\n", costoFormateado);
@@ -320,7 +333,13 @@ public class Recital {
             asignacionesCargadas++;
         }
 
-        System.out.printf("Estado previo de %d asignaciones cargadas con éxito!\n", asignacionesCargadas);
+        System.out.printf("Se cargó el estado previo con %d asignaciones de forma exitosa!\n", asignacionesCargadas);
+    }
+
+    public List<Asignacion> getAsignacionesPorArtista(ArtistaBase artista) {
+        return this.asignaciones.stream()
+                .filter(a -> a.getArtista().equals(artista))
+                .toList();
     }
 
     public List<Asignacion> getAsignacionesPorCancion(Cancion cancion) {

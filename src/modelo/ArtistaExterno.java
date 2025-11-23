@@ -74,7 +74,6 @@ public class ArtistaExterno extends ArtistaBase {
                 " | Costo Actual: " + costoFormateado +
                 " | Máx Canciones: " + super.getMaxCanciones() +
                 " | Roles Históricos: " + rolesHistoricosStr +
-                " | Roles Entrenados: " + rolesAdquiridosStr +
-                " (" + this.rolesAdquiridos + ")";
+                " | Roles Entrenados: " + rolesAdquiridosStr;
     }
 }

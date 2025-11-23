@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class ArtistaBase {
         return this.maxCanciones;
     }
     public double getCostoBase() {
-        return costoBase;
+        return 0;
     }
     
     /**
@@ -99,5 +100,13 @@ public class ArtistaBase {
                 " | Costo: " + costoFormateado +
                 " | Máx Canciones: " + this.maxCanciones +
                 " | Roles Históricos: " + rolesHistoricosStr;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArtistaBase)) return false;
+        ArtistaBase a = (ArtistaBase) o;
+        return Objects.equals(nombre, a.nombre);
     }
 }
