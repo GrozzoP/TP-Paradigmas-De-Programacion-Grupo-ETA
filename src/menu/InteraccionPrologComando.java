@@ -1,5 +1,7 @@
 package menu;
 
+import java.util.Scanner;
+
 import modelo.Recital;
 import servicio.PrologServicio;
 
@@ -14,12 +16,26 @@ public class InteraccionPrologComando implements Comando {
 
 	@Override
 	public void ejecutar() {
-		System.out.println("Consulta a Prolog: entrenamientos mínimos necesarios");
+		if (recital == null) {
+            System.out.println("Primero debe cargar un recital antes de consultar a Prolog.");
+            return;
+        }
 
-		int entrenamientos = prologServicio.calcularEntrenamientosMinimos(recital);
+		@SuppressWarnings("resource")
+        Scanner sc = new Scanner(System.in);
 
-		System.out.println("Cantidad mínima de entrenamientos (según Prolog): " + entrenamientos);
+        System.out.println("Consulta a Prolog: entrenamientos mínimos y costo total.");
+        System.out.print("Ingrese el costo base por entrenamiento: ");
 
+        double costoBase = sc.nextDouble();
+
+        int entrenamientosMinimos = prologServicio.calcularEntrenamientosMinimos(recital);
+        double costoTotal = prologServicio.calcularCostoTotalEntrenamientos(recital, costoBase);
+
+        System.out.println("--------------------------------------------");
+        System.out.println("Entrenamientos mínimos necesarios: " + entrenamientosMinimos);
+        System.out.println("Costo total estimado: " + costoTotal);
+        System.out.println("--------------------------------------------");
 	}
 
 	@Override

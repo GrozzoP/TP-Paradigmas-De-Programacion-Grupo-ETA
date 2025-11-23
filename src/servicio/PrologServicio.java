@@ -1,53 +1,62 @@
 package servicio;
 
-import modelo.Recital;
-import modelo.Rol;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jpl7.Atom;
+import org.jpl7.Query;
+import org.jpl7.Term;
+import org.jpl7.Util;
+import org.jpl7.Variable;
+
+import modelo.Recital;
+import modelo.Rol;
+
 public class PrologServicio {
+
     public PrologServicio() {
-        /*
-        //Cargamos el archivo Prolog
+        // Cargamos el archivo Prolog una sola vez al crear el servicio
         Query q1 = new Query(
                 "consult",
                 new Term[]{ new Atom("src/prolog/recital_planning.pl") }
         );
 
         if (!q1.hasSolution()) {
-            throw new RuntimeException("No se pudo cargar el archivo Prolog: prolog/recital_planning.pl");
+            throw new RuntimeException("No se pudo cargar el archivo Prolog: src/prolog/recital_planning.pl");
         }
-        */
     }
 
-
+    /**
+     * Llama a Prolog (min_trainings/2) para calcular
+     * la cantidad mínima de entrenamientos necesarios.
+     */
     public int calcularEntrenamientosMinimos(Recital recital) {
-   /*
+
         Map<Rol, Integer> faltantes = recital.getRolesFaltantesTotales();
 
-        //Convertimos ese map a una lista de Term con repetidos
-        //con el fin de que: voz principal = 2 y guitarra = 1  nos quede [voz principal, voz principal, guitarra]
+        // Si no hay roles faltantes, no hace falta entrenar
+        if (faltantes.isEmpty()) {
+            return 0;
+        }
+
         List<Term> rolesTerms = new ArrayList<>();
 
+        // Ejemplo: voz=2, guitarra=1 -> [voz, voz, guitarra]
         for (Map.Entry<Rol, Integer> entry : faltantes.entrySet()) {
             Rol rol = entry.getKey();
             int cantidad = entry.getValue();
 
             for (int i = 0; i < cantidad; i++) {
-                //Lo instanciamos en prolog creando un atom
                 rolesTerms.add(new Atom(rol.getNombre()));
             }
         }
 
-        //Convertimos la lista java a una lista prolog
+        @SuppressWarnings("deprecation")
         Term rolesList = Util.termArrayToList(rolesTerms.toArray(new Term[0]));
 
-        //Creamos la variable a utulizar en prolog
         Variable N = new Variable("N");
 
-        //Llamamos a min_trainings
         Query q = new Query(
                 "min_trainings",
                 new Term[]{ rolesList, N }
@@ -55,8 +64,11 @@ public class PrologServicio {
 
         Map<String, Term> solution = q.oneSolution();
 
-        
-        return solution.get("N").intValue();*/
-        return 0;
+        return solution.get("N").intValue();
+    }
+
+    public double calcularCostoTotalEntrenamientos(Recital recital, double costoBase) {
+        int minEntrenamientos = calcularEntrenamientosMinimos(recital);
+        return minEntrenamientos * costoBase;
     }
 }
