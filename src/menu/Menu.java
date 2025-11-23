@@ -46,6 +46,7 @@ public class Menu {
         comandos.add(new ListarArtistasAsignadosComando(recital));
         comandos.add(new ListarEstadoCancionesComando(recital));
         comandos.add(new InteraccionPrologComando(recital));
+        comandos.add(new MostrarHistorialColaboracionesComando(recital));
         comandos.add(new GuardarEstadoComando(recital));
         comandos.add(new CargarEstadoAnteriorComando(recital));
         comandos.add(new SalirComando(recital, this));

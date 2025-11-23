@@ -75,7 +75,11 @@ public class ArtistaBase {
     public boolean esEntrenable() {
         return false;
     }
-    
+
+    public Set<Colaboracion> getHistorialBandas() {
+        return historialBandas;
+    }
+
     /** Añade una colaboración (historial) */
     public void agregarColaboracion(Colaboracion colaboracion) {
         this.historialBandas.add(colaboracion);

@@ -53,6 +53,6 @@ public class GuardarEstadoComando implements Comando {
 
     @Override
     public String getDescripcion() {
-        return "Guardar el estado actual del recital";
+        return "(BONUS) Guardar el estado actual del recital";
     }
 }

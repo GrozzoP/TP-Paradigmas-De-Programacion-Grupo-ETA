@@ -27,6 +27,6 @@ public class CargarEstadoAnteriorComando implements Comando {
 
     @Override
     public String getDescripcion() {
-        return "Cargar del archivo de salida los datos anteriores";
+        return "(BONUS) Cargar del archivo de salida los datos anteriores";
     }
 }
