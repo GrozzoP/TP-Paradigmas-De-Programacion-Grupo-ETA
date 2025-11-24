@@ -19,18 +19,28 @@
   "cancion" : "Cerca de la revolución",
   "rol" : "Guitarrista"
 }, {
-  "artista" : "Saje",
-  "costo" : 7000.0,
-  "cancion" : "Levitating",
-  "rol" : "Voz"
-}, {
   "artista" : "Charly García",
   "costo" : 0.0,
   "cancion" : "Desarma y sangra",
   "rol" : "Tecladista"
 }, {
   "artista" : "Saje",
-  "costo" : 7000.0,
+  "costo" : 15750.0,
+  "cancion" : "Sultans of Swing",
+  "rol" : "Bajista"
+}, {
+  "artista" : "Saje",
+  "costo" : 15750.0,
+  "cancion" : "Europa",
+  "rol" : "Compositor"
+}, {
+  "artista" : "Saje",
+  "costo" : 15750.0,
   "cancion" : "Desarma y sangra",
+  "rol" : "Voz"
+}, {
+  "artista" : "Saje",
+  "costo" : 15750.0,
+  "cancion" : "Levitating",
   "rol" : "Voz"
 } ]

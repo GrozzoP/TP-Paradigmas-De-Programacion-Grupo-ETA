@@ -45,7 +45,7 @@ public class MostrarHistorialColaboracionesComando implements Comando {
                         if(!relaciones.contains(relacionA) && !relaciones.contains(relacionB)) {
                             String bandas = getBandasCompartidas(artistaA, artistaB);
 
-                            System.out.printf("    %s <-> %s (Comparten: %s)\n",
+                            System.out.printf("    %s <-> %s (Comparten banda: %s)\n",
                                     artistaA.getNombre(),
                                     artistaB.getNombre(),
                                     bandas);

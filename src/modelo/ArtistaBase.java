@@ -31,7 +31,7 @@ public class ArtistaBase {
         return this.maxCanciones;
     }
     public double getCostoBase() {
-        return 0;
+        return costoBase;
     }
     
     /**

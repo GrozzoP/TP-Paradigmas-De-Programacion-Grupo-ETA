@@ -27,6 +27,7 @@ public class ListarRolesRestRecitalComando implements Comando {
                 rolesFaltantes.forEach((rol, cantidad) -> {
                     System.out.printf("- [%s] : Falta/n %d\n", rol.getNombre(), cantidad);
                 });
+                System.out.println();
                 hayCanciones = true;
             }
         }
