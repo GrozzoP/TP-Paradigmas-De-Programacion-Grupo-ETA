@@ -67,7 +67,7 @@ public class EntrenarArtistaTest {
     }
 
     @Test
-    void entrenarArtistaExternoSinAsignacionesAgregaRolYSubeCosto() throws ArtistaNoEntrenable {
+    void dadoArtistaExternoLibre_cuandoSeEntrenaConNuevoRol_entoncesAgregaRolYAumentaCosto() throws ArtistaNoEntrenable {
         double costoInicial = externo.getCostoBase();
 
         recital.entrenarArtista(externo, rolNuevo);
@@ -83,7 +83,7 @@ public class EntrenarArtistaTest {
     }
 
     @Test
-    void noPermiteEntrenarArtistaYaContratado() {
+    void dadoArtistaExternoContratado_cuandoSeIntentaEntrenar_entoncesLanzaArtistaNoEntrenable() {
         // Marcamos al artista como "contratado" agregándole una asignación cualquiera
         Rol rolGuitarra = new Rol("Guitarra");
         Cancion cancion = new Cancion("Song 1", Map.of(rolGuitarra, 1));
@@ -102,7 +102,7 @@ public class EntrenarArtistaTest {
     }
 
     @Test
-    void entrenarConRolNullLanzaIllegalArgumentException() {
+    void dadoRolNulo_cuandoSeIntentaEntrenarArtista_entoncesLanzaIllegalArgumentException() {
         // No tiene asignaciones, así que pasa la validación de Recital, pero ArtistaExterno.entrenar(null) lanza IllegalArgumentException
         assertThrows(IllegalArgumentException.class,
                 () -> recital.entrenarArtista(externo, null),

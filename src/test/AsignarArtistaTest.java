@@ -72,7 +72,7 @@ public class AsignarArtistaTest {
     }
 
     @Test
-    void artistaNoEsElegibleSiNoPuedeCubrirRol() {
+    void dadoArtistaSinRolNecesario_cuandoSeVerificaElegibilidad_entoncesRetornaFalse() {
         Rol rolTeclados = new Rol("Teclados"); // Ningún artista lo cubre
 
         List<Asignacion> asignaciones = new ArrayList<>();
@@ -92,7 +92,7 @@ public class AsignarArtistaTest {
     }
 
     @Test
-    void costoFinalConDescuentoCuandoExternoComparteBandaConBase() {
+    void dadoArtistaExternoCompartiendoBandaConBase_cuandoSeCalculaCosto_entoncesAplicaDescuento() {
 
         Asignacion asignacionBase =
                 new Asignacion(baseBrian, rolGuitarra, cancion1);
@@ -123,7 +123,7 @@ public class AsignarArtistaTest {
     }
 
     @Test
-    void costoTotalCancionEsSumaDeAsignacionesExterno() {
+    void dadoCancionConAsignaciones_cuandoSeCalculaCostoTotal_entoncesEsSumaDeCostosFinales() {
 
         Asignacion asigBase =
                 new Asignacion(baseBrian, rolGuitarra, cancion1);

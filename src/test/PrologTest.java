@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PrologTest {
 
     @Test
-    void testMinEntrenamientosCoincideConRolesFaltantes() throws Exception {
+    void dadoRecitalSinAsignaciones_cuandoSeCalculaMinEntrenamientos_entoncesCoincideConRolesFaltantes() throws Exception {
         CargadorDatos loader = new CargadorDatos();
         Recital recital = new Recital(loader);
         PrologServicio prolog = new PrologServicio();
@@ -30,7 +30,7 @@ public class PrologTest {
     }
 
     @Test
-    void testCostoEntrenamientosEsMinPorCostoBase() throws Exception {
+    void dadoRecitalSinAsignaciones_cuandoSeCalculaCostoTotalEntrenamiento_entoncesEsMinimoPorCostoBase() throws Exception {
         CargadorDatos loader = new CargadorDatos();
         Recital recital = new Recital(loader);
         PrologServicio prolog = new PrologServicio();

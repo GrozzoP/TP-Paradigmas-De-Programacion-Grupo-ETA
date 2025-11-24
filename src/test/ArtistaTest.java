@@ -26,7 +26,7 @@ public class ArtistaTest {
     private Colaboracion colaboracionQueen;
 
     @BeforeEach
-    void ejecutar() {
+    void setUp() {
         // Roles
         rolGuitarrista = new Rol("Guitarrista");
         rolBaterista = new Rol("Baterista");

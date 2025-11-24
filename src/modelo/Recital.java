@@ -300,14 +300,15 @@ public class Recital {
         System.out.println("-".repeat(30));
     }
 
-    public void cargarEstadoPrevio(List<EstadoRecitalDTO> estadoGuardado) {
+    public Map<Integer, Double> cargarEstadoPrevio(List<EstadoRecitalDTO> estadoGuardado) {
         if (estadoGuardado.isEmpty()) {
             System.out.println("No hay estado previo para cargar.");
-            return;
+            return Map.of(0, 0.0);
         }
 
         this.asignaciones.clear();
 
+        Map<Integer, Double> respuesta = new HashMap<>();
         Map<String, ArtistaBase> todosLosArtistas = new HashMap<>();
         this.artistasBase.forEach(a -> todosLosArtistas.put(a.getNombre(), a));
         this.artistaExternos.forEach(a -> todosLosArtistas.put(a.getNombre(), a));
@@ -316,6 +317,7 @@ public class Recital {
                 .collect(Collectors.toMap(Cancion::getTitulo, c -> c));
 
         int asignacionesCargadas = 0;
+        double costoTotalCargado = 0.0;
 
         for (EstadoRecitalDTO dto : estadoGuardado) {
             ArtistaBase artista = todosLosArtistas.get(dto.getArtista());
@@ -329,11 +331,14 @@ public class Recital {
             }
 
             Asignacion nuevaAsignacion = new Asignacion(artista, rol, cancion);
+
             this.asignaciones.add(nuevaAsignacion);
+
+            costoTotalCargado += dto.getCosto();
             asignacionesCargadas++;
         }
 
-        System.out.printf("Se cargó el estado previo con %d asignaciones de forma exitosa!\n", asignacionesCargadas);
+        return Map.of(asignacionesCargadas, costoTotalCargado);
     }
 
     public List<Asignacion> getAsignacionesPorArtista(ArtistaBase artista) {

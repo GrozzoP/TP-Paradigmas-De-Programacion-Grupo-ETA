@@ -8,6 +8,7 @@ import modelo.Rol;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EntrenarArtistaComando implements Comando {
     private Recital recital;
@@ -21,51 +22,84 @@ public class EntrenarArtistaComando implements Comando {
     @Override
     public void ejecutar() {
         System.out.println("--- ENTRENAR ARTISTA EXTERNO EN NUEVO ROL ---");
-        mostrarArtistasElegibles();
+        Set<ArtistaExterno> elegibles = obtenerYMostrarArtistasElegibles();
 
-        System.out.print("\nIngresá el nombre del artista externo a entrenar: ");
-        String nombreArtista = scanner.nextLine().trim();
+        if(elegibles.isEmpty()) {
+            System.out.println(Menu.ANSI_YELLOW + "\nNo hay artistas externos elegibles para entrenamiento (están contratados o no existen)." + Menu.ANSI_RESET);
+        } else {
+            Optional<ArtistaExterno> artistaOpc;
+            String nombreArtista;
 
-        System.out.print("Ingresá el nombre del rol a enseñar: ");
-        String nombreRol = scanner.nextLine().trim();
+            do {
+                System.out.print("\nIngrese el nombre del artista externo a entrenar: ");
+                nombreArtista = scanner.nextLine().trim();
 
-        Rol nuevoRol = new Rol(nombreRol);
+                final String nombreArtistaConst = nombreArtista;
 
-        Optional<ArtistaExterno> artistaOpt = recital.getArtistaExternos().stream()
-                .filter(a -> a.getNombre().equalsIgnoreCase(nombreArtista))
-                .findFirst();
+                artistaOpc = elegibles.stream()
+                        .filter(a -> a.getNombre().equalsIgnoreCase(nombreArtistaConst))
+                        .findFirst();
 
-        if (artistaOpt.isEmpty()) {
-            System.out.println(Menu.ANSI_RED + "ERROR: Artista externo '" + nombreArtista + "' no encontrado." + Menu.ANSI_RESET);
-            return;
-        }
+                if (artistaOpc.isEmpty()) {
+                    System.out.println(Menu.ANSI_RED + "El Artista '" + nombreArtista + "' no fue encontrado o no es elegible. Ingresar de nuevo..." + Menu.ANSI_RESET);
+                }
+            } while (artistaOpc.isEmpty());
 
-        try {
-            ArtistaExterno artista = artistaOpt.get();
-            recital.entrenarArtista(artista, nuevoRol);
+            ArtistaExterno artista = artistaOpc.get();
 
-            System.out.println(Menu.ANSI_GREEN + "\nEntrenamiento exitoso." + Menu.ANSI_RESET);
-            System.out.printf("- %s ahora cubre el rol: %s.\n", artista.getNombre(), nuevoRol.getNombre());
-            System.out.printf("- Su nuevo costo base es: $%,.2f\n", artista.getCostoBase());
+            Rol nuevoRol;
+            boolean rolYaCubierto = false;
+            String nombreRol;
 
-        } catch (ArtistaNoEntrenable e) {
-            System.err.println(Menu.ANSI_RED + "\nENTRENAMIENTO FALLIDO: " + e.getMessage() + Menu.ANSI_RESET);
+            do {
+                System.out.print("Ingrese el nombre del rol a enseñar: ");
+                nombreRol = scanner.nextLine().trim();
+
+                nuevoRol = new Rol(nombreRol);
+
+                rolYaCubierto = artista.puedeCubrir(nuevoRol);
+
+                if (rolYaCubierto) {
+                    System.out.println(Menu.ANSI_YELLOW + "El artista " + artista.getNombre() +
+                            " ya cubre el rol '" + nombreRol + "' históricamente o por entrenamiento previo. Ingrese un rol nuevo." + Menu.ANSI_RESET);
+                }
+
+            } while (rolYaCubierto);
+
+            try {
+                recital.entrenarArtista(artista, nuevoRol);
+
+                System.out.println(Menu.ANSI_GREEN + "\nEntrenamiento exitoso!" + Menu.ANSI_RESET);
+                System.out.printf("- %s ahora cubre el rol: %s.\n", artista.getNombre(), nuevoRol.getNombre());
+                System.out.printf("- Su nuevo costo base es: $%,.2f\n", artista.getCostoBase());
+
+            } catch (ArtistaNoEntrenable e) {
+                System.err.println(Menu.ANSI_RED + "\nENTRENAMIENTO FALLIDO: " + e.getMessage() + Menu.ANSI_RESET);
+            }
         }
     }
 
-    private void mostrarArtistasElegibles() {
+    private Set<ArtistaExterno> obtenerYMostrarArtistasElegibles() {
         Set<ArtistaExterno> externos = recital.getArtistaExternos();
 
-        System.out.println("\nArtistas Externos Disponibles:");
+        Set<ArtistaExterno> elegibles = externos.stream()
+                .filter(a -> recital.getEntrenamientoServicio().esArtistaEntrenable(a, recital.getAsignaciones()))
+                .collect(Collectors.toSet());
+
+        System.out.print("\nArtistas externos disponibles para entrenar:\n");
         System.out.println("---------------------------------------------------------");
 
-        for (ArtistaExterno artista : externos) {
-            if (recital.getEntrenamientoServicio().esArtistaEntrenable(artista, recital.getAsignaciones())) {
-                System.out.printf("- %s (Costo: $%,.2f)\n",
+        if (!elegibles.isEmpty()) {
+            for (ArtistaExterno artista : elegibles) {
+                System.out.printf("- %s (Costo base: $%,.2f)\n",
                         artista.getNombre(),
                         artista.getCostoBase());
             }
+            System.out.println("---------------------------------------------------------");
+
         }
+
+        return elegibles;
     }
 
     @Override

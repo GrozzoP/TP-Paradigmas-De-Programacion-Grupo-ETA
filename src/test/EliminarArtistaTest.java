@@ -65,7 +65,7 @@ public class EliminarArtistaTest {
     }
 
     @Test
-    void quitarArtistaEliminaTodasSusAsignaciones() {
+    void dadoArtistaConMultiplesAsignaciones_cuandoSeQuitaArtista_entoncesEliminaTodasAsignaciones() {
         int eliminadas = recital.quitarArtista(brian);
 
         assertEquals(2, eliminadas,
@@ -83,7 +83,7 @@ public class EliminarArtistaTest {
     }
 
     @Test
-    void quitarArtistaQueNoTieneAsignacionesNoModificaNada() {
+    void dadoArtistaSinAsignaciones_cuandoSeQuitaArtista_entoncesListaGlobalNoSeModifica() {
         ArtistaBase otro = new ArtistaBase("Artista X", 0.0, 5);
 
         int antes = recital.getAsignaciones().size();
@@ -96,7 +96,7 @@ public class EliminarArtistaTest {
     }
 
     @Test
-    void quitarArtistaNullDevuelveMenosUnoYNoCambiaAsignaciones() {
+    void dadoArtistaNulo_cuandoSeIntentaQuitar_entoncesRetornaErrorYNoModificaAsignaciones() {
         int antes = recital.getAsignaciones().size();
 
         int eliminadas = recital.quitarArtista(null);

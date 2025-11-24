@@ -60,7 +60,7 @@ public class CargarEstadoTest {
     }
 
     @Test
-    void cargarEstadoPrevioGeneraAsignacionesCorrectas() {
+    void dadoEstadoValido_cuandoSeCargaEstadoPrevio_entoncesGeneraAsignacionesCorrectas() {
         List<EstadoRecitalDTO> estado = List.of(
                 new EstadoRecitalDTO("Brian May", 0.0, "Song 1", "Guitarra"),
                 new EstadoRecitalDTO("Gary Moore", 1000.0, "Song 2", "Batería")
@@ -84,7 +84,7 @@ public class CargarEstadoTest {
     }
 
     @Test
-    void cargarEstadoPrevioIgnoraAsignacionesInvalidas() {
+    void dadoEstadoConDatosInvalidos_cuandoSeCarga_entoncesIgnoraAsignacionesSinModelo() {
         List<EstadoRecitalDTO> estado = List.of(
                 new EstadoRecitalDTO("Brian May", 0.0, "Song 1", "Guitarra"),
                 new EstadoRecitalDTO("ArtistaInexistente", 0.0, "Song 1", "Guitarra"),
@@ -100,7 +100,7 @@ public class CargarEstadoTest {
     }
 
     @Test
-    void cargarEstadoPrevioVaciaAsignacionesPrevias() {
+    void dadoAsignacionesExistentes_cuandoSeCargaNuevoEstado_entoncesAsignacionesPreviasSeVacian() {
         recital.cargarEstadoPrevio(List.of(
                 new EstadoRecitalDTO("Brian May", 0.0, "Song 1", "Guitarra")
         ));
