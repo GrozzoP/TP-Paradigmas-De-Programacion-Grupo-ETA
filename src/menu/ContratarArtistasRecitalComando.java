@@ -1,19 +1,21 @@
 package menu;
 
 import excepcion.RolesNoCubiertos;
+import modelo.ArtistaExterno;
 import modelo.Asignacion;
 import modelo.Recital;
+import modelo.Rol;
 
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ContratarArtistasRecitalComando implements Comando {
     private Recital recital;
-    private Scanner scanner;
 
-    public ContratarArtistasRecitalComando(Recital recital, Scanner scanner) {
+    public ContratarArtistasRecitalComando(Recital recital) {
         this.recital = recital;
-        this.scanner = scanner;
     }
 
     @Override
@@ -22,19 +24,20 @@ public class ContratarArtistasRecitalComando implements Comando {
 
         List<Asignacion> nuevasAsignaciones = null;
         int asignacionesAntes = recital.getAsignaciones().size();
-
         String mensajeDeFallo = null;
+        boolean huboFallo = false;
 
         try {
             nuevasAsignaciones = recital.contratarParaRecitalCompleto();
-
         } catch (RolesNoCubiertos e) {
             mensajeDeFallo = e.getMessage();
+            huboFallo = true;
+
             List<Asignacion> todasAsignacionesDespues = recital.getAsignaciones();
             nuevasAsignaciones = todasAsignacionesDespues.subList(asignacionesAntes, todasAsignacionesDespues.size());
 
         } catch (Exception e) {
-            System.err.println(Menu.ANSI_RED + "\nERROR INESPERADO: " + e.getMessage() + Menu.ANSI_RESET);
+            System.err.println(Menu.ANSI_RED + "\n ERROR INESPERADO: " + e.getMessage() + Menu.ANSI_RESET);
         }
 
         int asignacionesNue = (nuevasAsignaciones != null) ? nuevasAsignaciones.size() : 0;
@@ -46,12 +49,55 @@ public class ContratarArtistasRecitalComando implements Comando {
             for(Asignacion asignacion : nuevasAsignaciones) {
                 recital.mostrarDetalleAsignacion(asignacion);
             }
-        } else if (mensajeDeFallo == null) {
-            System.out.println(Menu.ANSI_GREEN + "\n✅ PROCESO COMPLETADO. No se requirieron nuevas asignaciones." + Menu.ANSI_RESET);
+        } else if (mensajeDeFallo == null && !huboFallo) {
+            System.out.println(Menu.ANSI_GREEN + "\n✅ PROCESO COMPLETADO. No se generaron nuevas asignaciones." + Menu.ANSI_RESET);
         }
 
-        if (mensajeDeFallo != null) {
+        Map<Rol, Integer> rolesFaltantesTotales = recital.getRolesFaltantesTotales();
+        String reporteFaltantes = null;
+
+        if (huboFallo && !rolesFaltantesTotales.isEmpty()) {
+            Set<Rol> rolesFaltantesSet = rolesFaltantesTotales.keySet();
+
+            Map<ArtistaExterno, Set<Rol>> recomendaciones = recital.getEntrenamientoServicio().recomendarEntrenamiento(
+                    rolesFaltantesSet,
+                    recital.getArtistaExternos(),
+                    recital.getAsignaciones()
+            );
+
+            if (!recomendaciones.isEmpty()) {
+                Map<String, Long> conteoRoles = rolesFaltantesTotales.entrySet().stream()
+                        .collect(Collectors.toMap(
+                                e -> e.getKey().getNombre(),
+                                e -> e.getValue().longValue()
+                        ));
+
+                reporteFaltantes = recital.getEntrenamientoServicio().generarMensajeRecomendacion(conteoRoles, recomendaciones);
+            } else {
+                StringBuilder sbReporteFaltantes = new StringBuilder();
+
+                sbReporteFaltantes.append("Contratación incompleta! Faltan cubrir los siguientes roles:\n");
+
+                rolesFaltantesTotales.forEach((rol, cont) -> {
+                    sbReporteFaltantes.append("• ")
+                            .append(rol.getNombre())
+                            .append(": Falta/n ")
+                            .append(cont)
+                            .append(".\n");
+                });
+
+                sbReporteFaltantes.append("\nNo se encontraron artistas externos para entrenar!");
+
+                reporteFaltantes = sbReporteFaltantes.toString();
+            }
+
             System.out.println(Menu.ANSI_RED + "\n❌ CONTRATACIÓN PARCIAL: Fallaron algunas canciones." + Menu.ANSI_RESET);
+            System.out.println(reporteFaltantes);
+            System.out.println("==================================================================");
+
+
+        } else if (mensajeDeFallo != null) {
+            System.out.println(Menu.ANSI_RED + "\nCONTRATACIÓN PARCIAL: Fallaron algunas canciones." + Menu.ANSI_RESET);
             System.out.println(mensajeDeFallo);
         }
 

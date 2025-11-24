@@ -109,4 +109,9 @@ public class ArtistaBase {
         ArtistaBase a = (ArtistaBase) o;
         return Objects.equals(nombre, a.nombre);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre);
+    }
 }

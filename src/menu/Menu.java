@@ -41,7 +41,7 @@ public class Menu {
         comandos.add(new ListarRolesRestCancionComando(recital, scanner));
         comandos.add(new ListarRolesRestRecitalComando(recital));
         comandos.add(new ContratarArtistasCancionComando(recital, scanner));
-        comandos.add(new ContratarArtistasRecitalComando(recital, scanner));
+        comandos.add(new ContratarArtistasRecitalComando(recital));
         comandos.add(new EntrenarArtistaComando(recital, scanner));
         comandos.add(new ListarArtistasAsignadosComando(recital));
         comandos.add(new ListarEstadoCancionesComando(recital));

@@ -51,10 +51,6 @@ public class Recital {
         asignaciones.add(a);
     }
 
-    public boolean removerAsignacion(Asignacion a) {
-        return asignaciones.remove(a);
-    }
-
     /**
      * Devuelve el conjunto de artistas externos efectivamente contratados.
      * Se determina revisando todas las asignaciones del recital.
@@ -145,7 +141,7 @@ public class Recital {
                         .orElse(null);
 
                 if (artistaElegido == null)
-                    artistaElegido = buscarArtistaExternoMasBarato(c, rol, artistaExternos, artistasAsignadosEnEstaCancion);
+                    artistaElegido = buscarArtistaExternoMasBarato(rol, artistaExternos, artistasAsignadosEnEstaCancion);
 
                 if (artistaElegido != null) {
                     nuevasAsignaciones.add(new Asignacion(artistaElegido, rol, c));
@@ -230,7 +226,7 @@ public class Recital {
      * en una canción dada, teniendo en cuenta límites de canciones
      * y evitando duplicaciones dentro de la misma canción.
      */
-    private ArtistaExterno buscarArtistaExternoMasBarato(Cancion c, Rol rol, Set<ArtistaExterno> artistaExternos, Set<ArtistaBase> artistasAsignados) {
+    private ArtistaExterno buscarArtistaExternoMasBarato(Rol rol, Set<ArtistaExterno> artistaExternos, Set<ArtistaBase> artistasAsignados) {
         ArtistaExterno mejorArtista = null;
         double costoMinimo = Double.MAX_VALUE;
 

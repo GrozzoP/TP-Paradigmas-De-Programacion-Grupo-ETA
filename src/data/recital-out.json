@@ -1,8 +1,13 @@
 [ {
-  "artista" : "Carlos Santana",
+  "artista" : "Charly García",
   "costo" : 0.0,
   "cancion" : "Europa",
   "rol" : "Guitarrista"
+}, {
+  "artista" : "Carlos Santana",
+  "costo" : 0.0,
+  "cancion" : "Europa",
+  "rol" : "Compositor"
 }, {
   "artista" : "Dua Lipa",
   "costo" : 30000.0,
@@ -25,22 +30,12 @@
   "rol" : "Tecladista"
 }, {
   "artista" : "Saje",
-  "costo" : 15750.0,
-  "cancion" : "Sultans of Swing",
-  "rol" : "Bajista"
-}, {
-  "artista" : "Saje",
-  "costo" : 15750.0,
-  "cancion" : "Europa",
-  "rol" : "Compositor"
-}, {
-  "artista" : "Saje",
-  "costo" : 15750.0,
+  "costo" : 7000.0,
   "cancion" : "Desarma y sangra",
   "rol" : "Voz"
 }, {
   "artista" : "Saje",
-  "costo" : 15750.0,
+  "costo" : 7000.0,
   "cancion" : "Levitating",
   "rol" : "Voz"
 } ]
